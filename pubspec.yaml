@@ -35,19 +35,17 @@ dependencies:
   coolicons: ^1.0.0
   cupertino_icons: ^1.0.2
   fancy_shimmer_image: ^2.0.1+1
+  file_picker: ^4.5.1
   flutter:
     sdk: flutter
+  flutter_staggered_grid_view: ^0.6.1
   flutter_svg: ^1.0.3
-  image_picker: ^0.8.4+9
+  get_it: ^7.2.0
   provider: ^6.0.2
+  video_player: ^2.3.0
+  video_thumbnail: ^0.4.6
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
@@ -76,21 +74,32 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-  - family: Roboto
-    fonts:
-      - asset: fonts/Roboto-Bold.ttf
-        weight: 700
-      - asset: fonts/Roboto-Medium.ttf
-        weight: 500
-      - asset: fonts/Roboto-Regular.ttf
-        weight: 400
-      # - asset: fonts/Rubik-Light.ttf
-      #   weight: 300
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
+        - asset: fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/Roboto-Regular.ttf
+          weight: 400
+    
+    - family: Proxima
+      fonts:
+        - asset: fonts/Proxima Nova Extrabold.otf
+          weight: 900
+        - asset: fonts/Proxima Nova Bold.otf
+          weight: 700
+        # - asset: fonts/Proxima Nova Medium.ttf
+        #   weight: 500
+        - asset: fonts/ProximaNova-Regular.otf
+          weight: 400
+        # - asset: fonts/Rubik-Light.ttf
+        #   weight: 300
+    #   - family: Trajan Pro
+    #     fonts:
+    #       - asset: fonts/TrajanPro.ttf
+    #       - asset: fonts/TrajanPro_Bold.ttf
+    #         weight: 700
+    #
+    # For details regarding fonts from package dependencies,
+    # see https://flutter.dev/custom-fonts/#from-packages

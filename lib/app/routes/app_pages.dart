@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:imgur/ui/views/home.dart';
+import 'package:imgur/ui/views/main_view.dart';
+import 'package:imgur/ui/views/signup_view.dart';
+part 'app_routes.dart';
+
+class AppPages {
+  static const initial = Routes.root;
+
+ static  Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case Routes.root:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const MainView(),
+          settings: settings,
+        );
+      case Routes.signup:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const SignUpView(),
+          settings: settings,
+        );
+      default:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const HomeView(),
+          settings: settings,
+        );
+    }
+  }
+
+  // static final routes = [
+  //   const MaterialPage(
+  //     name: Routes.root,
+  //     child: HomeView(),
+  //   ),
+  //   const MaterialPage(
+  //     name: Routes.signup,
+  //     child: SignUpView(),
+  //   ),
+  // ];
+}

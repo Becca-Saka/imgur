@@ -1,77 +1,49 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:coolicons/coolicons.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 
 import 'home.dart';
 
-class MainView extends StatefulWidget {
+class MainView extends StatelessWidget {
   const MainView({Key? key}) : super(key: key);
 
   @override
-  State<MainView> createState() => _MainViewState();
-}
-
-class _MainViewState extends State<MainView> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: getBody(),
-      //TODO: change bottombar icons
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        backgroundColor: Color(0xFF263238),
-        // backgroundColor: appBlack,
-        // backgroundColor: appBlack,3c4049
-        unselectedItemColor: Colors.black,
-        selectedItemColor: appGreen,
-        currentIndex: currentIndex,
-        iconSize: 30,
-        onTap: onTabChanged,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Coolicons.home_outline),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
+    return BaseView<FeedController>(
+        builder: (context, controller, child) {
+          return Scaffold(
+            body: getBody(controller),
+            //TODO: change bottombar icons
+            bottomNavigationBar: BottomNavigationBar(
+              elevation: 0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              backgroundColor: appDeepBlack,
+              unselectedItemColor: Colors.black,
+              selectedItemColor: appGreen,
+              currentIndex: controller.currentIndex,
+              iconSize: 30,
+              onTap: controller.onTabChanged,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Coolicons.home_outline),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: 'Search',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  label: 'Profile',
+                ),
+              ],
+            ),
+          );
+        });
   }
 
-  onTabChanged(int index) async {
-    if (index == 1) {
-      log('search');
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowedExtensions: ['jpg', 'png', 'gif', 'jpeg'],
-      );
-
-      if (result != null) {
-        File file = File(result.files.single.path!);
-      } else {
-        // User canceled the picker
-      }
-    } else {
-      currentIndex = index;
-    }
-    setState(() {});
-  }
-
-  int currentIndex = 0;
-
-  Widget getBody() {
+  Widget getBody(FeedController controller) {
     List<Widget> pages = [
       const HomeView(),
       Container(
@@ -82,7 +54,7 @@ class _MainViewState extends State<MainView> {
       ),
     ];
     return IndexedStack(
-      index: currentIndex,
+      index: controller.currentIndex,
       children: pages,
     );
   }

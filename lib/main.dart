@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
          scaffoldMessengerKey: SnackBarService.rootScaffoldMessengerKey,
         title: 'Imgur(Tech387)',
         theme: ThemeData(
-          fontFamily: 'Roboto',
+          fontFamily: 'Proxima Nova',
           primarySwatch: Colors.blue,
         ),
         initialRoute: AppPages.initial,

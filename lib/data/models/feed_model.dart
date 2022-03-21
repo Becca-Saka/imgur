@@ -6,6 +6,7 @@ class FeedModel {
   String? type;
   String? link, cover;
   bool isAlbum;
+  int height;
   List<Album>? images;
 
   FeedModel({
@@ -18,6 +19,7 @@ class FeedModel {
     this.isAlbum = false,
     this.images,
     this.cover,
+    this.height=0,
   });
 
   factory FeedModel.fromJson(Map<String, dynamic> json) => FeedModel(
@@ -32,6 +34,7 @@ class FeedModel {
             ? null
             : List<Album>.from(json["images"].map((x) => Album.fromJson(x))),
         cover: json["cover"],
+        height: json["cover_height"] ?? json["height"],
       );
 
   Map<String, dynamic> toJson() => {

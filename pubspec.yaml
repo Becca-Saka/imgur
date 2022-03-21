@@ -83,7 +83,7 @@ flutter:
         - asset: fonts/Roboto-Regular.ttf
           weight: 400
     
-    - family: Proxima
+    - family: Proxima Nova
       fonts:
         - asset: fonts/Proxima Nova Extrabold.otf
           weight: 900

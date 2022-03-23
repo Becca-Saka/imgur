@@ -19,7 +19,7 @@ class ReArrageImagesView extends StatelessWidget {
           actions: [
             Center(
               child: InkWell(
-                onTap: () {},
+                onTap: () => Navigator.of(context).pop(),
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
@@ -45,60 +45,57 @@ class ReArrageImagesView extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
               Expanded(
-                child: ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    final image = controller.imagesToUpload[index];
-
-                    return Container(
-                      height: 100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(
-                              width: 120,
-                              child: Image.file(
-                                File(image),
-                                fit: BoxFit.cover,
-                              )),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    bottomRight: Radius.circular(10)),
-                                color: appBlack,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                   Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Description',
-                                        style: TextStyle(
-                                            color: appLightGrey,),
-                                      )),
-                                  Center(
-                                    child: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(Icons.sort)),
-                                  )
-                                ],
-                              ),
+                child: ReorderableListView(
+                  // padding: const EdgeInsets.symmetric(horizontal: 40),
+                  children: controller.imagesToUpload
+                      .map((e) => SizedBox(
+                            key: UniqueKey(),
+                            height: 100,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                SizedBox(
+                                    width: 120,
+                                    child: Image.file(
+                                      File(e),
+                                      fit: BoxFit.cover,
+                                    )),
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10)),
+                                      color: appBlack,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Description',
+                                              style: TextStyle(
+                                                color: appLightGrey,
+                                              ),
+                                            )),
+                                        Center(
+                                          child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(Icons.dehaze)),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  itemCount: controller.imagesToUpload.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(height: 15);
-                  },
+                          ))
+                      .toList(),
+                  onReorder: controller.rearrangeFiles,
                 ),
               ),
             ],

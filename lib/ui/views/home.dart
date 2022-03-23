@@ -29,10 +29,12 @@ class _HomeViewState extends State<HomeView>
 
   @override
   Widget build(BuildContext context) {
-    return BaseView<FeedController>(onModelReady: (controller) {
-      _tabController = TabController(length: 5, initialIndex: 0, vsync: this);
-      _tabController.addListener(() => _handleTabSelection(controller));
-      controller.getViralFeeds();
+    return BaseView<FeedController>(onModelReady: (controller) async {
+        _tabController = TabController(length: 5, initialIndex: 0, vsync: this);
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        _tabController.addListener(() => _handleTabSelection(controller));
+        await controller.getViralFeeds();
+      });
     }, builder: (context, controller, child) {
       return Scaffold(
         body: Container(

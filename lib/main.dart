@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/authentication_controller.dart';
 import 'package:imgur/data/services/amplify_services.dart';
-import 'package:imgur/data/services/authentication_service.dart';
-import 'package:provider/provider.dart';
+import 'package:imgur/data/services/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AmplifyService.instance.init();
   setupLocator();
+  SharedPreferenceService().saveToken('');
   runApp(const MyApp());
 }
 

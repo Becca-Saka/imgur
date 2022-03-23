@@ -5,7 +5,7 @@ import 'package:imgur/data/services/api_response.dart';
 
 ApiBaseHelper _helper = ApiBaseHelper();
 
-class FeedRepository {
+class ApiRepository {
   Future<ApiResponse> getFeed() async {
     var url = '/gallery/top/{{sort}}/{{window}}/{{page}}';
     final response = await _helper.getData(url, hasHeader: true);
@@ -24,6 +24,12 @@ class FeedRepository {
     return response;
   }
    Future<ApiResponse> uploadImages() async {
+    var url = '/gallery/user/{{sort}}/{{window}}/{{page}}';
+    final response = await _helper.getData(url, hasHeader: true);
+    return response;
+  }
+  
+   Future<ApiResponse> addImagesToAlbum() async {
     var url = '/gallery/user/{{sort}}/{{window}}/{{page}}';
     final response = await _helper.getData(url, hasHeader: true);
     return response;

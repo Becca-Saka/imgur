@@ -3,14 +3,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/appstate.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/data/repository/feed_repository.dart';
+import 'package:imgur/data/repository/api_repository.dart';
 import 'package:imgur/data/services/api_response.dart';
-import 'package:imgur/data/services/authentication_service.dart';
 import 'state_controller.dart';
 
 class FeedController extends StateController {
   final NavigationService _navigationService = locator<NavigationService>();
-  final FeedRepository _userRepository = locator<FeedRepository>();
+  final ApiRepository _userRepository = locator<ApiRepository>();
   List<FeedModel> feeds = [];
   List<FeedModel> viralfeeds = [];
   List<FeedModel> userSubfeeds = [];
@@ -49,7 +48,7 @@ class FeedController extends StateController {
     }
   }
 
-  getViralFeeds() async {
+  Future<void> getViralFeeds() async {
     if (viralfeeds.isEmpty) {
       setAppState(AppState.busy);
       ApiResponse? response = await _userRepository.getViralFeed();
@@ -59,7 +58,6 @@ class FeedController extends StateController {
       }
       setAppState(AppState.idle);
     }
-    log('${state} ${viralfeeds.length}');
   }
 
   getUSerSubFeeds() async {
@@ -114,6 +112,17 @@ class FeedController extends StateController {
     }
   }
 
+  rearrangeFiles(int oldIndex, int newIndex) {
+    // setState(() {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    final item = imagesToUpload.removeAt(oldIndex);
+    imagesToUpload.insert(newIndex, item);
+    notifyListeners();
+    // });
+  }
+
   navigateToUpload() async {
     final imageResult = await pickFile();
     if (imageResult != null) {
@@ -124,5 +133,5 @@ class FeedController extends StateController {
     }
   }
 
-  navigateToRearrange()  => _navigationService.navigateTo(Routes.rearrangeView);
+  navigateToRearrange() => _navigationService.navigateTo(Routes.rearrangeView);
 }

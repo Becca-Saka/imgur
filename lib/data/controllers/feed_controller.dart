@@ -10,6 +10,7 @@ import 'package:imgur/data/repository/api_repository.dart';
 import 'package:imgur/data/services/amplify_services.dart';
 import 'package:imgur/data/services/api_response.dart';
 import 'package:imgur/models/ModelProvider.dart';
+import 'package:imgur/models/comments_models.dart';
 import 'state_controller.dart';
 
 final allowedExtensions = [
@@ -47,6 +48,7 @@ class FeedController extends StateController {
   List<FeedModel> viralfeeds = [];
   List<FeedModel> userSubfeeds = [];
   List<FeedModel> followingfeeds = [];
+  List<CommentsModel> comments = [];
   List<String> imagesToUpload = [];
   String? uploadTitle;
   String? albumId;
@@ -170,7 +172,7 @@ class FeedController extends StateController {
         imgurAlbumLink: albumData['link'],
         coverLink: cover['link'],
         coverType: cover['type'],
-        title: albumData['title']??'',
+        title: albumData['title'] ?? '',
         length: imagesToUpload.length,
         dateTime: albumData['datetime'],
       );
@@ -194,4 +196,14 @@ class FeedController extends StateController {
   }
 
   navigateToRearrange() => _navigationService.navigateTo(Routes.rearrangeView);
+
+  getComments(String id) async {
+    final response = await _apiRepository.getFeedComment(id);
+    if (response.isSuccessful) {
+      final comment = response.data as List<dynamic>;
+      comments = comment.map((e) => CommentsModel.fromJson(e)).toList();
+      notifyListeners();
+    }
+    log('response: ${comments.length}');
+  }
 }

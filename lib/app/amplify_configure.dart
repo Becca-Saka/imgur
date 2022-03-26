@@ -28,7 +28,7 @@ class AmplifyConfiguration {
         // _storagePlugin
       ]);
       await Amplify.configure(amplifyconfig);
-      // await getCurrentUser();
+      await getCurrentUser();
     } catch (e) {
       log('Amplify already configured');
     }

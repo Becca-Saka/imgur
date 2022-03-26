@@ -3,13 +3,39 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:imgur/app/amplify_configure.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/models/ModelProvider.dart';
 
 class AuthenticationService {
   final auth = Amplify.Auth;
   final dataStore = Amplify.DataStore;
-
+ Future<UserModel?> getCurrentUser() async {
+    try {
+      if (AmplifyConfiguration.instance.isSignedIn) {
+        final user = await getUserFromDatabase();
+        if (user != null) {
+          return user;
+        }
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
+  }
+    Future<UserModel?> getUserFromDatabase() async {
+    try {
+      final currentUser = await auth.getCurrentUser();
+      final user = await dataStore.query(UserModel.classType,
+          where: UserModel.ID.eq(currentUser.userId));
+      if (user.isNotEmpty) {
+        return user.first;
+      }
+      return null;
+    } on Exception {
+      return null;
+    }
+  }
   Future<UserModel?> signInUserWithGoogle() async {
     try {
       await auth.signOut();
@@ -78,7 +104,7 @@ class AuthenticationService {
   Future<UserModel> _saveUserToDataBase(String email, String userName,
       {String? picture}) async {
     final currentUser = await Amplify.Auth.getCurrentUser();
-
+    log('currentUser: $currentUser');
     final user = UserModel(
       email: email,
       username: userName,

@@ -1,6 +1,5 @@
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/state_controller.dart';
-import 'package:imgur/data/repository/api_repository.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
 import 'package:imgur/models/ModelProvider.dart';
 
@@ -9,7 +8,8 @@ class AccountController extends StateController {
   UserModel _currentUser = UserModel(username: '');
   final SharedPreferenceService _preferenceService =
       locator<SharedPreferenceService>();
-  final ApiRepository _apiRepository = locator<ApiRepository>();
+
+  String? acessToken;
 
   updateCurrentUser(UserModel user) {
     _currentUser = user;
@@ -27,5 +27,14 @@ class AccountController extends StateController {
     if (user != null) {
       _currentUser = user;
     }
+  }
+
+  Future<bool> loadAccessTokenFromStorage() async {
+    final token = await _preferenceService.readToken();
+    if (token != null) {
+      acessToken = token;
+      return true;
+    }
+    return false;
   }
 }

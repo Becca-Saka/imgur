@@ -3,13 +3,10 @@ import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/authentication_controller.dart';
 import 'package:imgur/app/amplify_configure.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
-import 'package:imgur/ui/views/auth/accesstoken_webview.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AmplifyConfiguration.instance.init();
   setupLocator();
-  SharedPreferenceService().saveToken('');
   runApp(const MyApp());
 }
 //TODO: get accestoken from webview
@@ -31,8 +28,6 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: AppPages.initial,
         onGenerateRoute: AppPages.onGenerateRoute,
-        // home: const SignUpView(),
-        // home: MyWebApp(),
       ),
     );
   }

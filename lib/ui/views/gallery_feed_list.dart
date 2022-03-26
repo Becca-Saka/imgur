@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:imgur/models/feed_model.dart';
-import 'package:imgur/ui/shared/const_color.dart';
+import 'package:imgur/app/barrel.dart';
 import 'package:imgur/ui/widgets/video_thumbnail.dart';
-import 'dart:ui' as ui;
 
 class GalleryFeedList extends StatelessWidget {
   final List<FeedModel> feeds;
@@ -25,7 +23,7 @@ class GalleryFeedList extends StatelessWidget {
         final type = album != null ? album.type! : be.type!;
         return InkWell(
           onTap: () {
-            Navigator.pushNamed(context, '/single_feed_view', arguments: be);
+            Navigator.pushNamed(context, Routes.singleFeedItem, arguments: be);
           },
           child: Card(
             color: appBlack,
@@ -55,40 +53,41 @@ class GalleryFeedList extends StatelessWidget {
                   top: 0,
                   right: 0,
                   child: Visibility(
-                    // visible: album != null ,
-                    // && be.images!.length > 1,
+                    visible: album != null,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: isVideo(type)
-                          ? const Icon(
-                              Icons.videocam,
-                              color: Colors.white,
-                            )
-                          : Row(
-                              children: [
-                                Text('${be.images!.length}',
-                                    style: TextStyle(
+                        padding: const EdgeInsets.all(8.0),
+                        child: be.images != null && be.images!.length > 1
+                            ? Row(
+                                children: [
+                                  Text('${be.images!.length}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        shadows: [
+                                          Shadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.6),
+                                              blurRadius: 25),
+                                        ],
+                                      )),
+                                  Card(
+                                    elevation: 8,
+                                    color: Colors.transparent,
+                                    shadowColor: Colors.black.withOpacity(0.6),
+                                    child: const Icon(
+                                      Icons.content_copy,
                                       color: Colors.white,
-                                      fontSize: 18,
-                                      shadows: [
-                                        Shadow(
-                                            color: Colors.black.withOpacity(0.6),
-                                            blurRadius: 25),
-                                      ],
-                                    )),
-                                Card(
-                                  elevation: 8,
-                                  color: Colors.transparent,
-                                  shadowColor: Colors.black.withOpacity(0.6),
-                                  child: const Icon(
-                                    Icons.content_copy,
-                                    color: Colors.white,
-                                    size: 18,
+                                      size: 18,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                    ),
+                                ],
+                              )
+                            : isVideo(type)
+                                ? const Icon(
+                                    Icons.videocam,
+                                    color: Colors.white,
+                                  )
+                                : SizedBox.shrink()),
                   ),
                 ),
               ],

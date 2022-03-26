@@ -23,16 +23,12 @@ class SharedPreferenceService {
     return null;
   }
 
-  saveToken(String token) async {
+  saveToken(Map<String, dynamic> data) async {
     final _prefs = await SharedPreferences.getInstance();
     final validTime = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day + 29);
-
-    final Map<String, dynamic> map = {
-      'token': token,
-      'validity': validTime.millisecondsSinceEpoch
-    };
-    _prefs.setString(tokenPath, jsonEncode(map));
+    data['expires_in'] = validTime.millisecondsSinceEpoch;
+    _prefs.setString(tokenPath, jsonEncode(data));
   }
 
   Future<String?> readToken() async {
@@ -40,13 +36,15 @@ class SharedPreferenceService {
     final value = _prefs.getString(tokenPath);
     if (value != null) {
       final Map<String, dynamic> token = jsonDecode(value);
-      final validity = token['validity'];
+      final validity = token['expires_in'];
       final diff = DateTime.fromMillisecondsSinceEpoch(validity);
       final res = diff.compareTo(DateTime.now());
       if (res > 0) {
-        return token['token'];
+        log('Token is valid');
+        return token['access_token'];
       }
     }
+    log('Token is invalid');
     return null;
   }
 }

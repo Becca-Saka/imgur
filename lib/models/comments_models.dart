@@ -2,14 +2,14 @@ class CommentsModel{
   int points;
   int commentCount;
   int datetime;
-  String comments;
+  String comment;
   String author;
 
   CommentsModel({
     required this.points,
     required this.commentCount,
     required this.datetime,
-    required this.comments,
+    required this.comment,
     required this.author,
   });
 
@@ -18,7 +18,7 @@ class CommentsModel{
         points: json["points"],
         commentCount: json["children"].length,
         datetime: json["datetime"],
-        comments: json["comments"],
+        comment: json["comment"],
         author: json["author"],
 
   );
@@ -27,7 +27,7 @@ class CommentsModel{
         "points": points,
         "comment_count": commentCount,
         "datetime": datetime,
-        "comments": comments,
+        "comments": comment,
         "author": author,
   };
 

@@ -7,4 +7,8 @@ abstract class Routes {
   static const uploadView = '/upload';
 
   static const  rearrangeView = '/rearrange';
+
+  static const mainView = '/main';
+
+  static const singleFeedItem ='/singleFeedItem';
 }

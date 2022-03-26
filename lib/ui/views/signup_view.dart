@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imgur/app/appstate.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/authentication_controller.dart';
-import 'package:provider/provider.dart';
+import 'package:imgur/data/services/shared_preferences.dart';
 
 class SignUpView extends StatelessWidget {
   const SignUpView({Key? key}) : super(key: key);
@@ -45,8 +45,9 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthenticationController>(
-        builder: (context, controller, child) {
+    return BaseView<AuthenticationController>(onModelReady: (model) {
+      model.onReady();
+    }, builder: (context, controller, child) {
       return Scaffold(
         body: IgnorePointer(
           ignoring: controller.state == AppState.busy,
@@ -78,7 +79,7 @@ class SignUpView extends StatelessWidget {
                         'Continue with Google',
                         const Color(0xFF4267B2),
                         Colors.white,
-                        controller.signUpWithGoogle,
+                        () => controller.requestSignUp('Google'),
                         suffixIcon: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
@@ -96,7 +97,7 @@ class SignUpView extends StatelessWidget {
                         'Continue with Facebook',
                         Colors.white,
                         appGreen,
-                        controller.signUpWithFacebook,
+                        () => controller.requestSignUp('Facebbok'),
                         suffixIcon: Image.asset(
                           'assets/images/Facebook-01.jpg',
                           height: 38,
@@ -126,7 +127,8 @@ class SignUpView extends StatelessWidget {
                                 TextSpan(
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      log('tapped');
+                                      SharedPreferenceService().readToken();
+                                      // log('tapped');
                                     },
                                   text: 'Terms of Service',
                                   style: const TextStyle(

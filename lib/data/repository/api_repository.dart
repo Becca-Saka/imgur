@@ -9,25 +9,31 @@ ApiBaseHelper _helper = ApiBaseHelper();
 
 class ApiRepository {
   Future<ApiResponse> getAcessToken(body) async {
-    var url = '/gallery/top/{{sort}}/{{window}}/{{page}}';
+    var url = '/gallery/top';
     final response = await _helper.postData(url, body, hasHeader: true);
     return response;
   }
 
   Future<ApiResponse> getFeed() async {
-    var url = '/gallery/top/{{sort}}/{{window}}/{{page}}';
+    var url = '/gallery/top';
     final response = await _helper.getData(url, hasHeader: true);
     return response;
   }
 
   Future<ApiResponse> getViralFeed() async {
-    var url = '/gallery/hot/{{sort}}/{{window}}/{{page}}';
+    var url = '/gallery/hot';
     final response = await _helper.getData(url, hasHeader: true);
     return response;
   }
 
   Future<ApiResponse> getUserSubFeed() async {
-    var url = '/gallery/user/{{sort}}/{{window}}/{{page}}';
+    var url = '/gallery/user';
+    final response = await _helper.getData(url, hasHeader: true);
+    return response;
+  }
+   Future<ApiResponse> getFeedComment(String id) async {
+    var url = '/gallery/$id/comments';
+
     final response = await _helper.getData(url, hasHeader: true);
     return response;
   }

@@ -1,5 +1,5 @@
 class FeedModel {
-  String? id;
+  String id;
   String? title;
   String? feedAuthor;
   String? description;
@@ -7,11 +7,12 @@ class FeedModel {
   String? type;
   String? link, cover;
   bool isAlbum;
-  int height;
+  int height, width;
+  int? views;
   List<Album>? images;
 
   FeedModel({
-    this.id,
+    required this.id,
     this.title,
     this.description,
     this.datetime,
@@ -22,6 +23,8 @@ class FeedModel {
     this.cover,
     this.feedAuthor,
     this.height=0,
+    this.width=0,
+    this.views=0,
   });
 
   factory FeedModel.fromJson(Map<String, dynamic> json) => FeedModel(
@@ -38,6 +41,8 @@ class FeedModel {
         cover: json["cover"],
         feedAuthor: json["account_url"],
         height: json["cover_height"] ?? json["height"],
+        width: json["cover_width"] ?? json["width"],
+        views: json["views"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,7 +66,7 @@ class Album{
   int? datetime;
   String? type;
   String? link;
-  int height;
+  int height, width;
 
   Album({
     this.id,
@@ -71,6 +76,7 @@ class Album{
     this.type,
     this.link,
     this.height=0,
+    this.width=0,
   });
 
   factory Album.fromJson(Map<String, dynamic> json) => Album(
@@ -81,6 +87,7 @@ class Album{
         type: json["type"],
         link: json["link"],
         height: json["height"],
+        width: json["width"],
       );
 
   Map<String, dynamic> toJson() => {

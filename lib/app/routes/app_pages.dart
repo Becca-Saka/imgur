@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:imgur/ui/views/home.dart';
 import 'package:imgur/ui/views/main_view.dart';
 import 'package:imgur/ui/views/rearrange_images_view.dart';
-import 'package:imgur/ui/views/signup_view.dart';
+import 'package:imgur/ui/views/auth/signup_view.dart';
 import 'package:imgur/ui/views/upload_view.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const initial = Routes.root;
+  static const initial = Routes.signup;
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {

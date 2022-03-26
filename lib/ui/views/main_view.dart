@@ -1,6 +1,7 @@
 import 'package:coolicons/coolicons.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
+import 'package:imgur/ui/views/profile_view.dart';
 
 import 'home.dart';
 
@@ -49,9 +50,7 @@ class MainView extends StatelessWidget {
       Container(
         color: appBlue,
       ),
-      Container(
-        color: appGreen,
-      ),
+     ProfileView()
     ];
     return IndexedStack(
       index: controller.currentIndex,

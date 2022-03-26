@@ -3,21 +3,26 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 
-
 import 'package:http/http.dart';
+import 'package:imgur/app/config.dart';
 
 import 'api_response.dart';
 
 class ApiBaseHelper {
   static const String _baseUrl = 'https://api.imgur.com/3/';
 
-  // static const String apiKey = '1wvZmlIdydbubDWLTJuk';
   static const String clientID = '67d8be663102607';
 
   Map<String, String> headers = {'Authorization': 'Client-ID $clientID'};
 
-  Future<ApiResponse> postData(String url, body,
-      {bool hasHeader = false}) async {
+  Map<String, String> tokenheaders = {'Authorization': 'Bearer $accessToken'};
+
+  Future<ApiResponse> postData(
+    String url,
+    body, {
+    bool hasHeader = false,
+    bool hasTokenHeader = false,
+  }) async {
     try {
       var request = MultipartRequest(
         'POST',
@@ -27,6 +32,7 @@ class ApiBaseHelper {
       return await _sendRequest(
         request,
         hasHeader,
+        hasTokenHeader,
         body: body,
       );
     } on SocketException {
@@ -40,31 +46,38 @@ class ApiBaseHelper {
     }
   }
 
-  Future<ApiResponse> _sendRequest(request, bool hasHeader,
-      {Map<String, String>? body}) async {
+  Future<ApiResponse> _sendRequest(
+    request,
+    bool hasHeader,
+    bool hasTokenHeader, {
+    Map<String, String>? body,
+  }) async {
     if (body != null) {
       request.fields.addAll(body);
     }
     if (hasHeader) {
-      headers['Authorization'] = 'Client-ID $clientID';
+      // headers['Authorization'] = 'Client-ID $clientID';
+      request.headers.addAll(headers);
     }
-    request.headers.addAll(headers);
+    if (hasTokenHeader) {
+      request.headers.addAll(tokenheaders);
+    }
+    log(request.headers.toString()+'uyuu');
     StreamedResponse response = await request.send().timeout(
           const Duration(seconds: 15),
         );
-//         final g = await response.stream.bytesToString();
-//  log('response fron '+g);
     return await _response(response);
   }
 
-  Future<ApiResponse> getData(String url, {bool hasHeader = false}) async {
+  Future<ApiResponse> getData(String url,
+      {bool hasHeader = false, bool hasTokenHeader = false}) async {
     try {
       var request = Request(
         'GET',
         Uri.parse(_baseUrl + url),
       );
 
-      return await _sendRequest(request, hasHeader);
+      return await _sendRequest(request, hasHeader, hasTokenHeader);
     } on SocketException {
       return ApiResponse(
         data: null,
@@ -84,7 +97,8 @@ Future<ApiResponse> _response(StreamedResponse response) async {
   } else if (response.statusCode >= 400 && response.statusCode <= 499) {
     return ApiResponse(
       isSuccessful: false,
-      message: json.decode(await response.stream.bytesToString())['data']['error'],
+      message: json.decode(await response.stream.bytesToString())['data']
+          ['error'],
     );
   } else if (response.statusCode >= 500 && response.statusCode <= 599) {
     return ApiResponse(

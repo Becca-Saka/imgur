@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:imgur/data/models/feed_model.dart';
+import 'package:imgur/models/feed_model.dart';
 import 'package:imgur/ui/shared/const_color.dart';
 import 'package:imgur/ui/widgets/video_thumbnail.dart';
 import 'dart:ui' as ui;
@@ -23,71 +23,76 @@ class GalleryFeedList extends StatelessWidget {
             : null;
         final String link = album != null ? album.link! : be.link!;
         final type = album != null ? album.type! : be.type!;
-        return Card(
-          color: appBlack,
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  getContentType(type, link, be.height),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0).copyWith(top: 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        Text('${be.title}',
-                            style: const TextStyle(color: Colors.white)),
-                        const SizedBox(height: 10),
-                        const Text('135',
-                            style: TextStyle(color: Colors.white)),
-                      ],
+        return InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, '/single_feed_view', arguments: be);
+          },
+          child: Card(
+            color: appBlack,
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    getContentType(type, link, be.height),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0).copyWith(top: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text('${be.title}',
+                              style: const TextStyle(color: Colors.white)),
+                          const SizedBox(height: 10),
+                          const Text('135',
+                              style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Visibility(
+                    // visible: album != null ,
+                    // && be.images!.length > 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: isVideo(type)
+                          ? const Icon(
+                              Icons.videocam,
+                              color: Colors.white,
+                            )
+                          : Row(
+                              children: [
+                                Text('${be.images!.length}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      shadows: [
+                                        Shadow(
+                                            color: Colors.black.withOpacity(0.6),
+                                            blurRadius: 25),
+                                      ],
+                                    )),
+                                Card(
+                                  elevation: 8,
+                                  color: Colors.transparent,
+                                  shadowColor: Colors.black.withOpacity(0.6),
+                                  child: const Icon(
+                                    Icons.content_copy,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
-                ],
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Visibility(
-                  // visible: album != null ,
-                  // && be.images!.length > 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: isVideo(type)
-                        ? const Icon(
-                            Icons.videocam,
-                            color: Colors.white,
-                          )
-                        : Row(
-                            children: [
-                              Text('${be.images!.length}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    shadows: [
-                                      Shadow(
-                                          color: Colors.black.withOpacity(0.6),
-                                          blurRadius: 25),
-                                    ],
-                                  )),
-                              Card(
-                                elevation: 8,
-                                color: Colors.transparent,
-                                shadowColor: Colors.black.withOpacity(0.6),
-                                child: const Icon(
-                                  Icons.content_copy,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

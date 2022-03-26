@@ -1,9 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:imgur/app/appstate.dart';
 import 'package:imgur/app/barrel.dart';
 
 class UploadView extends StatelessWidget {
@@ -44,7 +43,8 @@ class UploadView extends StatelessWidget {
                                     Icons.more_horiz,
                                     color: Colors.white,
                                   ),
-                                  onSelected: (String index) =>controller.navigateToRearrange(),
+                                  onSelected: (String index) =>
+                                      controller.navigateToRearrange(),
                                   itemBuilder: (context) {
                                     return [
                                       const PopupMenuItem(
@@ -57,18 +57,47 @@ class UploadView extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                               Icon(
+                              Icon(
                                 Icons.remove_red_eye,
                                 color: appLightGrey,
                               ),
                               RichText(
-                                  text:  TextSpan(
+                                  text: TextSpan(
                                 text: '  Your post will upload as ',
                                 style: TextStyle(color: appLightGrey),
-                                children: const [
-                                   TextSpan(
+                                children: [
+                                  TextSpan(
                                     text: 'Hidden',
-                                    style: TextStyle(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        log('tapped');
+                                        showModalBottomSheet(
+                                            context: context,
+                                            backgroundColor: appDeepBlack,
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(30),
+                                              topRight: Radius.circular(30),
+                                            )),
+                                            builder: (BuildContext c) {
+                                              return Container(
+                                                height: 200,
+                                                child: Column(children: [
+                                                  Column(children: [
+                                                    Row(
+                                                      children:[
+                                                        Icon(Icons.remove_red_eye_rounded),
+                                                        Text('Hidden')
+                                                      ]
+                                                    ),
+                                                        Text('USe h')
+
+                                                  ],)
+                                                ]),
+                                              );
+                                            });
+                                      },
+                                    style: const TextStyle(
                                         color: Color(0xFF4caf50),
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -107,7 +136,7 @@ class UploadView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                           text: 'By uploading, you agree to our ',
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             color: appLightGrey,
                           ),
@@ -134,26 +163,41 @@ class UploadView extends StatelessWidget {
                 color: appBlack,
                 height: kToolbarHeight + MediaQuery.of(context).padding.top,
                 child: SafeArea(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+                  child: Visibility(
+                    visible: controller.state == AppState.uploading,
+                    child: 
                       Container(
                         color: appGreen,
-                        width: 80,
-                        child: const Center(
-                          child: Text(
-                            'Upload',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
+                        width: double.infinity,
+                        alignment: Alignment.centerRight,
+                        child: const Icon(Icons.autorenew),
+                      ),
+                    
+                    replacement: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
-                      )
-                    ],
+                        Icon(Icons.autorenew),
+                        InkWell(
+                          onTap: () => controller.uploadFiles(),
+                          child: Container(
+                            color: appGreen,
+                            width: 80,
+                            child: const Center(
+                              child: Text(
+                                'Upload',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

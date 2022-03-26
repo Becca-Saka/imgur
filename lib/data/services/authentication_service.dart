@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/models/UserModel.dart';
+import 'package:imgur/models/ModelProvider.dart';
 
 class AuthenticationService {
   final auth = Amplify.Auth;

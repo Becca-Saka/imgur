@@ -20,15 +20,19 @@
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
 import 'package:amplify_core/amplify_core.dart';
+import 'Albums.dart';
+import 'PostComment.dart';
 import 'UserModel.dart';
 
+export 'Albums.dart';
+export 'PostComment.dart';
 export 'UserModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "9b265ec7a23c3f1f7fc3adb41c1dd076";
+  String version = "13b296e8aed7d629314b86bf91fd417d";
   @override
-  List<ModelSchema> modelSchemas = [UserModel.schema];
+  List<ModelSchema> modelSchemas = [Albums.schema, PostComment.schema, UserModel.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -37,6 +41,10 @@ class ModelProvider implements ModelProviderInterface {
   
   ModelType getModelTypeByModelName(String modelName) {
     switch(modelName) {
+      case "Albums":
+        return Albums.classType;
+      case "PostComment":
+        return PostComment.classType;
       case "UserModel":
         return UserModel.classType;
       default:

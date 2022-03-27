@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "917918534270",
+    "project_id": "imgur-tech387",
+    "storage_bucket": "imgur-tech387.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917918534270:android:1a7507cff97bba1e22662f",
+        "android_client_info": {
+          "package_name": "com.example.imgur"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917918534270-b65e7ls3kre3d7e346tb72rqti5268k6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl07YQHC8NB4wGLyKMA4g4WZp1yNKg5lE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917918534270-b65e7ls3kre3d7e346tb72rqti5268k6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

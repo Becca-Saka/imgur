@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -176,14 +175,12 @@ class FeedController extends StateController {
   }
 
   makeComment(FeedModel feedModel) async {
-    log('make comment ${commentController.text} ${commentController.text.isNotEmpty}');
     if (commentController.text.isNotEmpty) {
-      log('here');
+  
       final commentText = commentController.text;
       final response = await _apiRepository.postFeedComment(
           feedModel.id, commentController.text);
-          log('response ${response.isSuccessful}'); 
-      if (response.isSuccessful) {
+       if (response.isSuccessful) {
         final Album? album =
             feedModel.images != null && feedModel.images!.isNotEmpty
                 ? feedModel.images!
@@ -199,9 +196,8 @@ class FeedController extends StateController {
             points: feedModel.points.toString(),
             date: DateTime.now().millisecondsSinceEpoch.toString(),
             comment: commentText);
-            log('comment ${comments.toJson()}');
         await _amplifyService.saveUserComments(comments);
-            log('comment  done');
+        
         commentController.clear();
         _navigationService.back();
       }

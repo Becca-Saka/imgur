@@ -59,7 +59,7 @@ class ApiBaseHelper {
     }
     if (hasTokenHeader) {
       tokenheaders = {
-        'Authorization': 'Bearer $accessToken'
+        'Authorization': 'Bearer ${locator<AccountController>().acessToken}'
       };
       request.headers.addAll(tokenheaders);
     }

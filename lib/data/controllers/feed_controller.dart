@@ -5,12 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/appstate.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/data/controllers/account_controller.dart';
-import 'package:imgur/data/repository/api_repository.dart';
-import 'package:imgur/data/services/amplify_services.dart';
-import 'package:imgur/data/services/api_response.dart';
-import 'package:imgur/models/ModelProvider.dart';
 import 'package:imgur/models/comments_models.dart';
+import 'package:imgur/models/feed_arguments.dart';
 import 'state_controller.dart';
 
 final allowedExtensions = [
@@ -42,16 +38,19 @@ class FeedController extends StateController {
   final NavigationService _navigationService = locator<NavigationService>();
   final ApiRepository _apiRepository = locator<ApiRepository>();
   final AccountController _accountController = locator<AccountController>();
-  AmplifyService _amplifyService = AmplifyService();
+  UserModel get user => _accountController.currentUser;
+  final AmplifyService _amplifyService = AmplifyService();
   UserModel get currentUser => _accountController.currentUser;
   List<FeedModel> feeds = [];
   List<FeedModel> viralfeeds = [];
   List<FeedModel> userSubfeeds = [];
   List<FeedModel> followingfeeds = [];
   List<CommentsModel> comments = [];
-  List<String> imagesToUpload = [];
+  List<Map<String, dynamic>> imagesToUploadMap = [];
   String? uploadTitle;
-  String? albumId;
+  FeedModel? uploadedFeed;
+
+  TextEditingController commentController = TextEditingController();
 
   int currentIndex = 0;
   onTabChanged(int index) async {
@@ -68,7 +67,8 @@ class FeedController extends StateController {
       setAppState(AppState.busy);
       ApiResponse? response = await _apiRepository.getViralFeed();
       if (response.isSuccessful) {
-        final feedslist = response.data as List<dynamic>;
+        var feedslist = response.data as List<dynamic>;
+        feedslist = feedslist.where((e) => e['is_album'] == true).toList();
         viralfeeds = feedslist.map((e) => FeedModel.fromJson(e)).toList();
       }
       setAppState(AppState.idle);
@@ -122,80 +122,82 @@ class FeedController extends StateController {
   pickMoreFiles() async {
     final res = await pickFile();
     if (res != null) {
-      imagesToUpload = [...imagesToUpload, ...res];
+      for (var e in res) {
+        imagesToUploadMap = [
+          ...imagesToUploadMap,
+          {'image': e, 'controller': TextEditingController()}
+        ];
+      }
       notifyListeners();
     }
   }
 
   rearrangeFiles(int oldIndex, int newIndex) {
-    // setState(() {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
-    final item = imagesToUpload.removeAt(oldIndex);
-    imagesToUpload.insert(newIndex, item);
+    final item = imagesToUploadMap.removeAt(oldIndex);
+    imagesToUploadMap.insert(newIndex, item);
     notifyListeners();
-    // });
   }
 
   uploadFiles() async {
-    log('uploading files');
     setAppState(AppState.busy);
     final rsp = await _apiRepository.createAlbum(uploadTitle);
     if (rsp.isSuccessful) {
-      log('album created');
       final albumId = rsp.data['id'];
-      final albumresp = await _apiRepository.getAlbum(albumId);
-      log('album resp: ${albumresp.data}');
-      final user = _accountController.currentUser;
-      final albumData = albumresp.data;
+      for (int i = 0; i < imagesToUploadMap.length; i++) {
+        final image = imagesToUploadMap[i];
+        final imagePath = image['image'];
 
-      log('album id: $albumId');
-      var cover;
-      for (int i = 0; i < imagesToUpload.length; i++) {
-        final byte = await File(imagesToUpload[i]).readAsBytes();
+        final imageDesc = image['controller'].text;
+        final byte = await File(imagePath).readAsBytes();
         String fileInBase64 = base64Encode(byte);
-        log('uploading file');
-        final response =
-            await _apiRepository.uploadImages(albumId, fileInBase64);
-        if (i == 0) {
-          cover = response.data;
-        }
-        log('uploaded file ${response.message}');
-        log('uploaded file ${response.data}');
-        log('uploaded file ${response.code}');
-        log('uploaded file ${response.isSuccessful}');
+        await _apiRepository.uploadImages(albumId, fileInBase64, imageDesc);
       }
-      final Albums album = Albums(
-        imgureId: '$albumId',
-        usermodelID: user.id,
-        imgurAlbumLink: albumData['link'],
-        coverLink: cover['link'],
-        coverType: cover['type'],
-        title: albumData['title'] ?? '',
-        length: imagesToUpload.length,
-        dateTime: albumData['datetime'],
-      );
-      log('album to datastor: ${album.toString()}');
+
+      final albumresp = await _apiRepository.getAlbum(albumId);
+      final album = await convertFeedToAlbum(albumresp.data);
 
       await _amplifyService.saveUserUpload(
           _accountController.currentUser, album);
-      // this.albumId = albumId;
+      uploadedFeed = FeedModel.fromJson(albumresp.data);
       setAppState(AppState.idle);
     }
   }
 
-  navigateToUpload() async {
-    final imageResult = await pickFile();
-    if (imageResult != null) {
-      imagesToUpload = imageResult;
-      log('${imagesToUpload.length}');
-      _navigationService.navigateTo(Routes.uploadView,
-          arguments: imagesToUpload);
-    }
+  Future<Albums> convertFeedToAlbum(dynamic albumData) async {
+    final cover = albumData['images']
+        .firstWhere((element) => element['id'] == albumData['cover']);
+
+    final Albums album = Albums(
+      imgureId: albumData['id'],
+      usermodelID: user.id,
+      imgurAlbumLink: albumData['link'],
+      coverLink: cover['link'],
+      coverType: cover['type'],
+      title: albumData['title'] ?? '',
+      length: imagesToUploadMap.length,
+      dateTime: albumData['datetime'],
+      isFavourite: false,
+      points: albumData['points'],
+    );
+    return album;
   }
 
-  navigateToRearrange() => _navigationService.navigateTo(Routes.rearrangeView);
+  clear() {
+    uploadedFeed = null;
+    imagesToUploadMap = [];
+    uploadTitle = null;
+  }
+
+  viewUploadedFeed() {
+    _navigationService.closeAndNavigateTo(
+      Routes.singleFeedItem,
+      arguments: FeedArgumnet(feed: uploadedFeed!, isUserFeed: true),
+    );
+    clear();
+  }
 
   getComments(String id) async {
     final response = await _apiRepository.getFeedComment(id);
@@ -204,6 +206,65 @@ class FeedController extends StateController {
       comments = comment.map((e) => CommentsModel.fromJson(e)).toList();
       notifyListeners();
     }
-    log('response: ${comments.length}');
   }
+
+  makeComment(FeedModel feedModel) async {
+    log('commenting');
+    if (commentController.text.isNotEmpty) {
+      final commentText = commentController.text;
+      final response =
+          await _apiRepository.postFeedComment(feedModel.id, commentController.text);
+      if (response.isSuccessful) {
+        log('data ${response.data}');
+        final Album? album =
+            feedModel.images != null && feedModel.images!.isNotEmpty
+                ? feedModel.images!
+                    .firstWhere((element) => element.id == feedModel.cover)
+                : null;
+        final String link = album != null ? album.link! : feedModel.link!;
+        final type = album != null ? album.type! : feedModel.type!;
+        final comments = PostComment(
+            imgurId: '${response.data['id']}',
+            usermodelID: user.id,
+            coverType: type,
+            coverLink: link,
+            points: feedModel.points.toString(),
+            date: DateTime.now().millisecondsSinceEpoch.toString(),
+            comment: commentText);
+        await _amplifyService.saveUserComments(comments);
+        commentController.clear();
+        _navigationService.back();
+        log('comment posted');
+      }
+    }
+  }
+
+  favoriteImage(String id) async {
+    final response = await _apiRepository.favoriteImage(id);
+    if (response.isSuccessful) {
+      final albumresp = await _apiRepository.getAlbum(id);
+      Albums album = await convertFeedToAlbum(albumresp.data);
+      final favorite = album.copyWith(
+        isFavourite: true,
+      );
+      await _amplifyService.saveUserFavorite(favorite);
+    }
+  }
+
+  navigateToUpload() async {
+    final imageResult = await pickFile();
+    if (imageResult != null) {
+      for (var e in imageResult) {
+        imagesToUploadMap = [
+          ...imagesToUploadMap,
+          {'image': e, 'controller': TextEditingController()}
+        ];
+      }
+      _navigationService.navigateTo(Routes.uploadView);
+    }
+  }
+
+  navigateToRearrange() => _navigationService.navigateTo(Routes.rearrangeView);
+  void navigateToComment(FeedModel feedModel) =>
+      _navigationService.navigateTo(Routes.commetsView, arguments: feedModel);
 }

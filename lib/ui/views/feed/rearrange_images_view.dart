@@ -47,7 +47,7 @@ class ReArrageImagesView extends StatelessWidget {
               Expanded(
                 child: ReorderableListView(
                   // padding: const EdgeInsets.symmetric(horizontal: 40),
-                  children: controller.imagesToUpload
+                  children: controller.imagesToUploadMap
                       .map((e) => SizedBox(
                             key: UniqueKey(),
                             height: 100,
@@ -57,7 +57,7 @@ class ReArrageImagesView extends StatelessWidget {
                                 SizedBox(
                                     width: 120,
                                     child: Image.file(
-                                      File(e),
+                                      File(e['image']),
                                       fit: BoxFit.cover,
                                     )),
                                 Expanded(
@@ -77,7 +77,7 @@ class ReArrageImagesView extends StatelessWidget {
                                         Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              'Description',
+                                              '${e['controller'].text}',
                                               style: TextStyle(
                                                 color: appLightGrey,
                                               ),

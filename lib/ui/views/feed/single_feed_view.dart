@@ -1,71 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/models/comments_models.dart';
+import 'package:imgur/models/feed_arguments.dart';
+import 'package:imgur/ui/widgets/cont_widget.dart';
 import 'package:imgur/ui/widgets/video_player.dart';
 
 class SingleFeedView extends StatelessWidget {
-  final FeedModel feed;
-  const SingleFeedView({Key? key, required this.feed}) : super(key: key);
-
+  final FeedArgumnet feedArgument;
+  const SingleFeedView({
+    Key? key,
+    required this.feedArgument,
+  }) : super(key: key);
+  FeedModel get feed => feedArgument.feed;
+  bool get isUserFeed => feedArgument.isUserFeed;
   @override
   Widget build(BuildContext context) {
-    return BaseView<FeedController>(
-        onModelReady: (model) => model.getComments(feed.id),
-        builder: (context, controller, child) {
-          return Scaffold(
-            backgroundColor: appDeepBlack,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Stack(
-                  children: [
-                    SingleChildScrollView(
-                      physics: const ScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildAppBar(context),
-                          const SizedBox(height: 20),
-                          _buildFeedContent(),
-                          const SizedBox(height: 20),
-                          feed.views != null
-                              ? Padding(
+    return BaseView<FeedController>(onModelReady: (model) {
+      if (!isUserFeed) {
+        model.getComments(feed.id);
+      }
+    }, builder: (context, controller, child) {
+      return Scaffold(
+        backgroundColor: appDeepBlack,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  physics: const ScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildAppBar(context, controller),
+                      const SizedBox(height: 20),
+                      _buildFeedContent(),
+                      const SizedBox(height: 20),
+                      Visibility(
+                        visible: !isUserFeed,
+                        child: feed.views != null
+                            ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text('${feed.views} views',
                                     style: TextStyle(
-                                        fontSize:12, color: appLightGrey)),
+                                        fontSize: 12, color: appLightGrey)),
                               )
-                              : const SizedBox.shrink(),
-                          _buildCommentSection(controller),
-                        ],
+                            : const SizedBox.shrink(),
                       ),
+                      Visibility(
+                          visible: !isUserFeed,
+                          replacement: _commentTopBar(controller),
+                          child: _buildCommentSection(controller)),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: appDeepBlack.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back),
+                          color: Colors.white),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: appDeepBlack.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: const Icon(Icons.arrow_back),
-                              color: Colors.white),
-                        ),
-                        _buildButtomBar(context)
-                      ],
-                    ),
+                    _buildButtomBar(context, controller)
                   ],
                 ),
-              ),
+              ],
             ),
-          );
-        });
+          ),
+        ),
+      );
+    });
   }
 
-  Padding _buildButtomBar(BuildContext context) {
+  Padding _buildButtomBar(BuildContext context, FeedController controller) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -84,30 +98,91 @@ class SingleFeedView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {},
                 icon: const Icon(Icons.arrow_upward_outlined),
-                color: Colors.white,
+                color:
+                    isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
               ),
               Column(
                 children: [
-                  Icon(Icons.expand_less, color: appLightGrey),
-                  const Text('113',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                  Icon(Icons.expand_less,
+                      color: isUserFeed
+                          ? appLightGrey.withOpacity(0.2)
+                          : appLightGrey),
+                  !isUserFeed
+                      ? const Text('113',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))
+                      : SizedBox.shrink(),
                 ],
               ),
               IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {},
+                color:
+                    isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
                 icon: const Icon(Icons.arrow_downward_outlined),
-                color: Colors.white,
               ),
-              const Icon(Icons.favorite_border, color: Colors.white),
+              IconButton(
+                  onPressed: () {
+                    controller.favoriteImage(feed.id);
+                  },
+                  color:
+                      isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
+                  icon: const Icon(Icons.favorite_border, color: Colors.white)),
               const Icon(Icons.share_outlined, color: Colors.white),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _commentTopBar(FeedController controller) {
+    return ColoredBox(
+      color: appBlack,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0).copyWith(top: 12),
+        child: isUserFeed
+            ? SizedBox(
+                width: double.infinity,
+                child: Text(
+                  '${feed.views} views',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: appLightGrey,
+                  ),
+                ))
+            : Row(
+                children: [
+                  Icon(
+                    Icons.compare_arrows,
+                    color: appLightGrey,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 5),
+                  Text('BEST COMMENTS',
+                      style: TextStyle(fontSize: 14, color: appLightGrey)),
+                  const Spacer(),
+                  InkWell(
+                    onTap:() =>  controller.navigateToComment(feed),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.comment,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        SizedBox(width: 5),
+                        Text('COMMxENT',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.white)),
+                      ],
+                    ),
+                  )
+                ],
+              ),
       ),
     );
   }
@@ -117,30 +192,7 @@ class SingleFeedView extends StatelessWidget {
       color: appBlack,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0).copyWith(top: 12),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.compare_arrows,
-                  color: appLightGrey,
-                  size: 16,
-                ),
-                const SizedBox(width: 5),
-                Text('BEST COMMENTS',
-                    style: TextStyle(fontSize: 14, color: appLightGrey)),
-                const Spacer(),
-                const Icon(
-                  Icons.comment,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                const SizedBox(width: 5),
-                const Text('COMMENT',
-                    style: TextStyle(fontSize: 14, color: Colors.white))
-              ],
-            ),
-          ),
+          _commentTopBar(controller),
           controller.comments.isNotEmpty
               ? ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -156,7 +208,7 @@ class SingleFeedView extends StatelessWidget {
     );
   }
 
-  Row _buildAppBar(BuildContext context) {
+  Row _buildAppBar(BuildContext context, FeedController controller) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,15 +216,17 @@ class SingleFeedView extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back),
             color: Colors.white),
-        const CircleAvatar(
-          radius: 15,
-        ),
+        // const CircleAvatar(
+        //   radius: 15,
+        // ),
+        profilePicture(
+            isUserFeed ? controller.user.username : feed.feedAuthor!),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${feed.title}",
+              Text(feed.title ?? '',
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -181,16 +235,22 @@ class SingleFeedView extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("${feed.feedAuthor} ",
+                  Text(
+                      isUserFeed
+                          ? controller.user.username
+                          : "${feed.feedAuthor} ",
                       style: TextStyle(fontSize: 16, color: appLightGrey)),
-                  Icon(
-                    Icons.add_circle,
-                    color: appLightGrey,
-                    size: 15,
+                  Visibility(
+                    visible: !isUserFeed,
+                    child: Icon(
+                      Icons.add_circle,
+                      color: appLightGrey,
+                      size: 15,
+                    ),
                   ),
                   const Spacer(),
-                  Text('3h',
-                      style: TextStyle(fontSize: 16, color: appLightGrey)),
+                  Text(isUserFeed ? 'Hidden' : ' 3h',
+                      style: TextStyle(fontSize: 14, color: appLightGrey)),
                 ],
               ),
             ],
@@ -211,18 +271,20 @@ class SingleFeedView extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = feed.images![index];
               return itemView(
-                  getContentType(
-                      item.type!, item.link!, item.height, item.width),
+                  getContentType(item.type!, item.link!, item.height,
+                      width: item.width, isItem: true),
                   item.description);
             },
           )
         : itemView(
-            getContentType(feed.type!, feed.link!, feed.height, feed.width),
+            getContentType(feed.type!, feed.link!, feed.height,
+                width: feed.width, isItem: true),
             '${feed.description}');
   }
 
   Widget itemView(Widget media, String? description) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         media,
         description != null && description != 'null'
@@ -235,24 +297,6 @@ class SingleFeedView extends StatelessWidget {
         const SizedBox(height: 10),
       ],
     );
-  }
-
-  bool isVideo(String type) => type.startsWith('video/');
-  bool isImage(String type) => type.startsWith('image/');
-
-  Widget getContentType(String type, String url, int height, int width) {
-    if (isImage(type)) {
-      return Image.network(
-        url,
-      );
-    } else if (isVideo(type)) {
-      return CustomVideoPlayer(
-        url: url,
-        width: width.toDouble(),
-        height: height.toDouble(),
-      );
-    }
-    return const SizedBox.shrink();
   }
 }
 
@@ -274,27 +318,29 @@ class CommentFeedItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CircleAvatar(
-                radius: 15,
-              ),
+              profilePicture(item.author),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center ,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(item.author,
+                        
+                        Text(item.author.length > 28 ? item.author.substring(0, 28)+'...' : item.author,
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis ,
                                 color: appLightGrey)),
                         Text(' . 3h',
                             style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 color: appLightGrey)),
-                        const Spacer(),
+                        const Spacer(flex: 2,),
                         // Text(
                         //     '${item.author} . ${item.datetime}'),
                         Visibility(

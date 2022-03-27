@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'package:imgur/amplifyconfiguration.dart';
 import 'package:imgur/models/ModelProvider.dart';
 
@@ -13,7 +14,7 @@ class AmplifyConfiguration {
   bool isDataStoreInitialized = false;
 
   Future<void> init() async {
-    // final AmplifyAPI _apiPlugin = AmplifyAPI();
+    final AmplifyAPI _apiPlugin = AmplifyAPI();
     final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
     // final AmplifyStorageS3 _storagePlugin = AmplifyStorageS3();
     final AmplifyDataStore _dataStorePlugin = AmplifyDataStore(
@@ -22,10 +23,9 @@ class AmplifyConfiguration {
 
     try {
       await Amplify.addPlugins([
-        // _apiPlugin,
+        _apiPlugin,
         _dataStorePlugin,
         _authPlugin,
-        // _storagePlugin
       ]);
       await Amplify.configure(amplifyconfig);
       await getCurrentUser();

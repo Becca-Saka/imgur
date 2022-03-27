@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "imgur",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-8f8fe0c0-9dcf-48cb-b57f-5b826b84eb5c/amplify/backend/api/imgur/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-9f19cb45-aa35-439a-8f84-a76db86a1d50/amplify/backend/api/imgur/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",

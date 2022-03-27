@@ -32,6 +32,9 @@ class PostComment extends Model {
   final String? _comment;
   final String? _date;
   final String? _usermodelID;
+  final String? _coverLink;
+  final String? _coverType;
+  final String? _points;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -77,6 +80,18 @@ class PostComment extends Model {
     }
   }
   
+  String? get coverLink {
+    return _coverLink;
+  }
+  
+  String? get coverType {
+    return _coverType;
+  }
+  
+  String? get points {
+    return _points;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -85,15 +100,18 @@ class PostComment extends Model {
     return _updatedAt;
   }
   
-  const PostComment._internal({required this.id, required imgurId, comment, date, required usermodelID, createdAt, updatedAt}): _imgurId = imgurId, _comment = comment, _date = date, _usermodelID = usermodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const PostComment._internal({required this.id, required imgurId, comment, date, required usermodelID, coverLink, coverType, points, createdAt, updatedAt}): _imgurId = imgurId, _comment = comment, _date = date, _usermodelID = usermodelID, _coverLink = coverLink, _coverType = coverType, _points = points, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory PostComment({String? id, required String imgurId, String? comment, String? date, required String usermodelID}) {
+  factory PostComment({String? id, required String imgurId, String? comment, String? date, required String usermodelID, String? coverLink, String? coverType, String? points}) {
     return PostComment._internal(
       id: id == null ? UUID.getUUID() : id,
       imgurId: imgurId,
       comment: comment,
       date: date,
-      usermodelID: usermodelID);
+      usermodelID: usermodelID,
+      coverLink: coverLink,
+      coverType: coverType,
+      points: points);
   }
   
   bool equals(Object other) {
@@ -108,7 +126,10 @@ class PostComment extends Model {
       _imgurId == other._imgurId &&
       _comment == other._comment &&
       _date == other._date &&
-      _usermodelID == other._usermodelID;
+      _usermodelID == other._usermodelID &&
+      _coverLink == other._coverLink &&
+      _coverType == other._coverType &&
+      _points == other._points;
   }
   
   @override
@@ -124,6 +145,9 @@ class PostComment extends Model {
     buffer.write("comment=" + "$_comment" + ", ");
     buffer.write("date=" + "$_date" + ", ");
     buffer.write("usermodelID=" + "$_usermodelID" + ", ");
+    buffer.write("coverLink=" + "$_coverLink" + ", ");
+    buffer.write("coverType=" + "$_coverType" + ", ");
+    buffer.write("points=" + "$_points" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -131,13 +155,16 @@ class PostComment extends Model {
     return buffer.toString();
   }
   
-  PostComment copyWith({String? id, String? imgurId, String? comment, String? date, String? usermodelID}) {
+  PostComment copyWith({String? id, String? imgurId, String? comment, String? date, String? usermodelID, String? coverLink, String? coverType, String? points}) {
     return PostComment._internal(
       id: id ?? this.id,
       imgurId: imgurId ?? this.imgurId,
       comment: comment ?? this.comment,
       date: date ?? this.date,
-      usermodelID: usermodelID ?? this.usermodelID);
+      usermodelID: usermodelID ?? this.usermodelID,
+      coverLink: coverLink ?? this.coverLink,
+      coverType: coverType ?? this.coverType,
+      points: points ?? this.points);
   }
   
   PostComment.fromJson(Map<String, dynamic> json)  
@@ -146,11 +173,14 @@ class PostComment extends Model {
       _comment = json['comment'],
       _date = json['date'],
       _usermodelID = json['usermodelID'],
+      _coverLink = json['coverLink'],
+      _coverType = json['coverType'],
+      _points = json['points'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'imgurId': _imgurId, 'comment': _comment, 'date': _date, 'usermodelID': _usermodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'imgurId': _imgurId, 'comment': _comment, 'date': _date, 'usermodelID': _usermodelID, 'coverLink': _coverLink, 'coverType': _coverType, 'points': _points, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "postComment.id");
@@ -158,6 +188,9 @@ class PostComment extends Model {
   static final QueryField COMMENT = QueryField(fieldName: "comment");
   static final QueryField DATE = QueryField(fieldName: "date");
   static final QueryField USERMODELID = QueryField(fieldName: "usermodelID");
+  static final QueryField COVERLINK = QueryField(fieldName: "coverLink");
+  static final QueryField COVERTYPE = QueryField(fieldName: "coverType");
+  static final QueryField POINTS = QueryField(fieldName: "points");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "PostComment";
     modelSchemaDefinition.pluralName = "PostComments";
@@ -196,6 +229,24 @@ class PostComment extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: PostComment.USERMODELID,
       isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: PostComment.COVERLINK,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: PostComment.COVERTYPE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: PostComment.POINTS,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imgur/app/appstate.dart';
 import 'package:imgur/data/controllers/feed_controller.dart';
-import 'package:imgur/ui/views/gallery_feed_list.dart';
+import 'package:imgur/ui/views/base_view.dart';
+import 'package:imgur/ui/views/feed/gallery_feed_list.dart';
 import 'package:imgur/ui/widgets/loading_placeholder.dart';
 
-import 'base_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);

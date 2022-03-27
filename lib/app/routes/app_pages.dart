@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/ui/views/home.dart';
+import 'package:imgur/models/feed_arguments.dart';
+import 'package:imgur/ui/views/auth/signup_view.dart';
+import 'package:imgur/ui/views/auth/startup_view.dart';
+import 'package:imgur/ui/views/feed/comment_view.dart';
+import 'package:imgur/ui/views/feed/home.dart';
+import 'package:imgur/ui/views/feed/rearrange_images_view.dart';
+import 'package:imgur/ui/views/feed/single_feed_view.dart';
+import 'package:imgur/ui/views/feed/upload_view.dart';
 import 'package:imgur/ui/views/main_view.dart';
-import 'package:imgur/ui/views/rearrange_images_view.dart';
-import 'package:imgur/ui/views/signup_view.dart';
-import 'package:imgur/ui/views/single_feed_view.dart';
-import 'package:imgur/ui/views/startup_view.dart';
-import 'package:imgur/ui/views/upload_view.dart';
 part 'app_routes.dart';
 
 class AppPages {
@@ -42,8 +44,18 @@ class AppPages {
       case Routes.singleFeedItem:
         return MaterialPageRoute<dynamic>(
           builder: (context) {
-            final arg = settings.arguments as FeedModel;
+            final arg = settings.arguments as FeedArgumnet;
             return SingleFeedView(
+              feedArgument: arg,
+            );
+          },
+          settings: settings,
+        );
+      case Routes.commetsView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) {
+            final arg = settings.arguments as FeedModel;
+            return CommentView(
               feed: arg,
             );
           },

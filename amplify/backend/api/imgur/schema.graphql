@@ -8,6 +8,9 @@ type Albums @model @auth(rules: [{allow: public}]) {
   title: String!
   dateTime: Int
   usermodelID: ID! @index(name: "byUserModel")
+  isFavourite: Boolean
+  points: Int
+  coverHeight: Int
 }
 
 type PostComment @model @auth(rules: [{allow: public}]) {
@@ -16,13 +19,16 @@ type PostComment @model @auth(rules: [{allow: public}]) {
   comment: String
   date: String
   usermodelID: ID! @index(name: "byUserModel")
+  coverLink: String
+  coverType: String
+  points: String
 }
 
 type UserModel @model @auth(rules: [{allow: public}]) {
   id: ID!
   username: String!
   email: String
-  picture: String
+  imgurId: String
   albums: [Albums] @hasMany(indexName: "byUserModel", fields: ["id"])
   postComments: [PostComment] @hasMany(indexName: "byUserModel", fields: ["id"])
 }

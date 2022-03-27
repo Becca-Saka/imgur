@@ -1,14 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:imgur/app/appstate.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/app/config.dart';
-import 'package:imgur/data/controllers/account_controller.dart';
 import 'package:imgur/data/services/authentication_service.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
-import 'package:imgur/models/ModelProvider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'state_controller.dart';
 
@@ -116,7 +113,7 @@ class AuthenticationController extends StateController
   Future<bool> getSignedIn() async {
     UserModel? result = await _authenticationService.getCurrentUser();
     if (result != null) {
-      log('User is signed in');
+      log('User is signed in ${result.toString()}');
       final isValid = await _accountController.loadAccessTokenFromStorage();
       if (isValid) {
         log("User is signed in");

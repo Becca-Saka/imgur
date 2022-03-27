@@ -32,7 +32,7 @@ class UserModel extends Model {
   final String id;
   final String? _username;
   final String? _email;
-  final String? _picture;
+  final String? _imgurId;
   final List<Albums>? _albums;
   final List<PostComment>? _postComments;
   final TemporalDateTime? _createdAt;
@@ -63,8 +63,8 @@ class UserModel extends Model {
     return _email;
   }
   
-  String? get picture {
-    return _picture;
+  String? get imgurId {
+    return _imgurId;
   }
   
   List<Albums>? get albums {
@@ -83,14 +83,14 @@ class UserModel extends Model {
     return _updatedAt;
   }
   
-  const UserModel._internal({required this.id, required username, email, picture, albums, postComments, createdAt, updatedAt}): _username = username, _email = email, _picture = picture, _albums = albums, _postComments = postComments, _createdAt = createdAt, _updatedAt = updatedAt;
+  const UserModel._internal({required this.id, required username, email, imgurId, albums, postComments, createdAt, updatedAt}): _username = username, _email = email, _imgurId = imgurId, _albums = albums, _postComments = postComments, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory UserModel({String? id, required String username, String? email, String? picture, List<Albums>? albums, List<PostComment>? postComments}) {
+  factory UserModel({String? id, required String username, String? email, String? imgurId, List<Albums>? albums, List<PostComment>? postComments}) {
     return UserModel._internal(
       id: id == null ? UUID.getUUID() : id,
       username: username,
       email: email,
-      picture: picture,
+      imgurId: imgurId,
       albums: albums != null ? List<Albums>.unmodifiable(albums) : albums,
       postComments: postComments != null ? List<PostComment>.unmodifiable(postComments) : postComments);
   }
@@ -106,7 +106,7 @@ class UserModel extends Model {
       id == other.id &&
       _username == other._username &&
       _email == other._email &&
-      _picture == other._picture &&
+      _imgurId == other._imgurId &&
       DeepCollectionEquality().equals(_albums, other._albums) &&
       DeepCollectionEquality().equals(_postComments, other._postComments);
   }
@@ -122,7 +122,7 @@ class UserModel extends Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("username=" + "$_username" + ", ");
     buffer.write("email=" + "$_email" + ", ");
-    buffer.write("picture=" + "$_picture" + ", ");
+    buffer.write("imgurId=" + "$_imgurId" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -130,12 +130,12 @@ class UserModel extends Model {
     return buffer.toString();
   }
   
-  UserModel copyWith({String? id, String? username, String? email, String? picture, List<Albums>? albums, List<PostComment>? postComments}) {
+  UserModel copyWith({String? id, String? username, String? email, String? imgurId, List<Albums>? albums, List<PostComment>? postComments}) {
     return UserModel._internal(
       id: id ?? this.id,
       username: username ?? this.username,
       email: email ?? this.email,
-      picture: picture ?? this.picture,
+      imgurId: imgurId ?? this.imgurId,
       albums: albums ?? this.albums,
       postComments: postComments ?? this.postComments);
   }
@@ -144,7 +144,7 @@ class UserModel extends Model {
     : id = json['id'],
       _username = json['username'],
       _email = json['email'],
-      _picture = json['picture'],
+      _imgurId = json['imgurId'],
       _albums = json['albums'] is List
         ? (json['albums'] as List)
           .where((e) => e?['serializedData'] != null)
@@ -161,13 +161,13 @@ class UserModel extends Model {
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'username': _username, 'email': _email, 'picture': _picture, 'albums': _albums?.map((Albums? e) => e?.toJson()).toList(), 'postComments': _postComments?.map((PostComment? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'username': _username, 'email': _email, 'imgurId': _imgurId, 'albums': _albums?.map((Albums? e) => e?.toJson()).toList(), 'postComments': _postComments?.map((PostComment? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "userModel.id");
   static final QueryField USERNAME = QueryField(fieldName: "username");
   static final QueryField EMAIL = QueryField(fieldName: "email");
-  static final QueryField PICTURE = QueryField(fieldName: "picture");
+  static final QueryField IMGURID = QueryField(fieldName: "imgurId");
   static final QueryField ALBUMS = QueryField(
     fieldName: "albums",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Albums).toString()));
@@ -204,7 +204,7 @@ class UserModel extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: UserModel.PICTURE,
+      key: UserModel.IMGURID,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));

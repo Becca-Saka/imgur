@@ -1,9 +1,9 @@
 import 'package:coolicons/coolicons.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/ui/views/profile_view.dart';
+import 'package:imgur/ui/views/profile/profile_view.dart';
 
-import 'home.dart';
+import 'feed/home.dart';
 
 class MainView extends StatelessWidget {
   const MainView({Key? key}) : super(key: key);

@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:imgur/app/amplify_configure.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/models/ModelProvider.dart';
 
 class AuthenticationService {
   final auth = Amplify.Auth;
   final dataStore = Amplify.DataStore;
- Future<UserModel?> getCurrentUser() async {
+  Future<UserModel?> getCurrentUser() async {
     try {
       if (AmplifyConfiguration.instance.isSignedIn) {
         final user = await getUserFromDatabase();
@@ -23,7 +21,8 @@ class AuthenticationService {
     }
     return null;
   }
-    Future<UserModel?> getUserFromDatabase() async {
+
+  Future<UserModel?> getUserFromDatabase() async {
     try {
       final currentUser = await auth.getCurrentUser();
       final user = await dataStore.query(UserModel.classType,
@@ -36,6 +35,7 @@ class AuthenticationService {
       return null;
     }
   }
+
   Future<UserModel?> signInUserWithGoogle() async {
     try {
       await auth.signOut();
@@ -48,10 +48,10 @@ class AuthenticationService {
         String userId = authUserAttributes[0].value;
         String userName = authUserAttributes[3].value;
         String email = authUserAttributes[4].value;
-        String picture = authUserAttributes[5].value;
-        log('userId: $userId: userName: $userName email: $email picture: $picture');
+        // String picture = authUserAttributes[5].value;
+        // log('userId: $userId: userName: $userName email: $email picture: $picture');
 
-        return await _handleAuthenticatedUser(userId, email, userName, picture);
+        return await _handleAuthenticatedUser(userId, email, userName);
       }
     } on AmplifyException catch (e) {
       SnackBarService.showErrorSnackBar(getErrorMessage(e.message));
@@ -72,13 +72,13 @@ class AuthenticationService {
         String userName = authUserAttributes[3].value;
         String email = authUserAttributes[4].value;
         final pictureData = authUserAttributes[5].value;
-        String? picture;
-        if (pictureData.isNotEmpty) {
-          final decodedPicture = jsonDecode(pictureData);
-          picture = decodedPicture['data']['url'];
-        }
+        // String? picture;
+        // if (pictureData.isNotEmpty) {
+        //   final decodedPicture = jsonDecode(pictureData);
+        //   picture = decodedPicture['data']['url'];
+        // }
 
-        return await _handleAuthenticatedUser(userId, email, userName, picture);
+        return await _handleAuthenticatedUser(userId, email, userName);
       }
     } on AmplifyException catch (e) {
       SnackBarService.showErrorSnackBar(getErrorMessage(e.message));
@@ -87,7 +87,7 @@ class AuthenticationService {
   }
 
   Future<UserModel> _handleAuthenticatedUser(
-      String userId, String email, String userName, String? picture) async {
+      String userId, String email, String userName,) async {
     List<UserModel> user = await dataStore.query(UserModel.classType,
         where: UserModel.ID.eq(userId));
     if (user.isNotEmpty) {
@@ -96,19 +96,19 @@ class AuthenticationService {
       return await _saveUserToDataBase(
         email,
         userName,
-        picture: picture,
       );
     }
   }
 
-  Future<UserModel> _saveUserToDataBase(String email, String userName,
-      {String? picture}) async {
+  Future<UserModel> _saveUserToDataBase(
+    String email,
+    String userName,
+  ) async {
     final currentUser = await Amplify.Auth.getCurrentUser();
     log('currentUser: $currentUser');
     final user = UserModel(
       email: email,
       username: userName,
-      picture: picture,
       id: currentUser.userId,
     );
     await dataStore.save(user);

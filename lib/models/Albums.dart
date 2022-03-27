@@ -36,6 +36,9 @@ class Albums extends Model {
   final String? _title;
   final int? _dateTime;
   final String? _usermodelID;
+  final bool? _isFavourite;
+  final int? _points;
+  final int? _coverHeight;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -142,6 +145,18 @@ class Albums extends Model {
     }
   }
   
+  bool? get isFavourite {
+    return _isFavourite;
+  }
+  
+  int? get points {
+    return _points;
+  }
+  
+  int? get coverHeight {
+    return _coverHeight;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -150,9 +165,9 @@ class Albums extends Model {
     return _updatedAt;
   }
   
-  const Albums._internal({required this.id, required imgureId, required imgurAlbumLink, required coverLink, required coverType, required length, required title, dateTime, required usermodelID, createdAt, updatedAt}): _imgureId = imgureId, _imgurAlbumLink = imgurAlbumLink, _coverLink = coverLink, _coverType = coverType, _length = length, _title = title, _dateTime = dateTime, _usermodelID = usermodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Albums._internal({required this.id, required imgureId, required imgurAlbumLink, required coverLink, required coverType, required length, required title, dateTime, required usermodelID, isFavourite, points, coverHeight, createdAt, updatedAt}): _imgureId = imgureId, _imgurAlbumLink = imgurAlbumLink, _coverLink = coverLink, _coverType = coverType, _length = length, _title = title, _dateTime = dateTime, _usermodelID = usermodelID, _isFavourite = isFavourite, _points = points, _coverHeight = coverHeight, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Albums({String? id, required String imgureId, required String imgurAlbumLink, required String coverLink, required String coverType, required int length, required String title, int? dateTime, required String usermodelID}) {
+  factory Albums({String? id, required String imgureId, required String imgurAlbumLink, required String coverLink, required String coverType, required int length, required String title, int? dateTime, required String usermodelID, bool? isFavourite, int? points, int? coverHeight}) {
     return Albums._internal(
       id: id == null ? UUID.getUUID() : id,
       imgureId: imgureId,
@@ -162,7 +177,10 @@ class Albums extends Model {
       length: length,
       title: title,
       dateTime: dateTime,
-      usermodelID: usermodelID);
+      usermodelID: usermodelID,
+      isFavourite: isFavourite,
+      points: points,
+      coverHeight: coverHeight);
   }
   
   bool equals(Object other) {
@@ -181,7 +199,10 @@ class Albums extends Model {
       _length == other._length &&
       _title == other._title &&
       _dateTime == other._dateTime &&
-      _usermodelID == other._usermodelID;
+      _usermodelID == other._usermodelID &&
+      _isFavourite == other._isFavourite &&
+      _points == other._points &&
+      _coverHeight == other._coverHeight;
   }
   
   @override
@@ -201,6 +222,9 @@ class Albums extends Model {
     buffer.write("title=" + "$_title" + ", ");
     buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.toString() : "null") + ", ");
     buffer.write("usermodelID=" + "$_usermodelID" + ", ");
+    buffer.write("isFavourite=" + (_isFavourite != null ? _isFavourite!.toString() : "null") + ", ");
+    buffer.write("points=" + (_points != null ? _points!.toString() : "null") + ", ");
+    buffer.write("coverHeight=" + (_coverHeight != null ? _coverHeight!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -208,7 +232,7 @@ class Albums extends Model {
     return buffer.toString();
   }
   
-  Albums copyWith({String? id, String? imgureId, String? imgurAlbumLink, String? coverLink, String? coverType, int? length, String? title, int? dateTime, String? usermodelID}) {
+  Albums copyWith({String? id, String? imgureId, String? imgurAlbumLink, String? coverLink, String? coverType, int? length, String? title, int? dateTime, String? usermodelID, bool? isFavourite, int? points, int? coverHeight}) {
     return Albums._internal(
       id: id ?? this.id,
       imgureId: imgureId ?? this.imgureId,
@@ -218,7 +242,10 @@ class Albums extends Model {
       length: length ?? this.length,
       title: title ?? this.title,
       dateTime: dateTime ?? this.dateTime,
-      usermodelID: usermodelID ?? this.usermodelID);
+      usermodelID: usermodelID ?? this.usermodelID,
+      isFavourite: isFavourite ?? this.isFavourite,
+      points: points ?? this.points,
+      coverHeight: coverHeight ?? this.coverHeight);
   }
   
   Albums.fromJson(Map<String, dynamic> json)  
@@ -231,11 +258,14 @@ class Albums extends Model {
       _title = json['title'],
       _dateTime = (json['dateTime'] as num?)?.toInt(),
       _usermodelID = json['usermodelID'],
+      _isFavourite = json['isFavourite'],
+      _points = (json['points'] as num?)?.toInt(),
+      _coverHeight = (json['coverHeight'] as num?)?.toInt(),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'imgureId': _imgureId, 'imgurAlbumLink': _imgurAlbumLink, 'coverLink': _coverLink, 'coverType': _coverType, 'length': _length, 'title': _title, 'dateTime': _dateTime, 'usermodelID': _usermodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'imgureId': _imgureId, 'imgurAlbumLink': _imgurAlbumLink, 'coverLink': _coverLink, 'coverType': _coverType, 'length': _length, 'title': _title, 'dateTime': _dateTime, 'usermodelID': _usermodelID, 'isFavourite': _isFavourite, 'points': _points, 'coverHeight': _coverHeight, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "albums.id");
@@ -247,6 +277,9 @@ class Albums extends Model {
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DATETIME = QueryField(fieldName: "dateTime");
   static final QueryField USERMODELID = QueryField(fieldName: "usermodelID");
+  static final QueryField ISFAVOURITE = QueryField(fieldName: "isFavourite");
+  static final QueryField POINTS = QueryField(fieldName: "points");
+  static final QueryField COVERHEIGHT = QueryField(fieldName: "coverHeight");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Albums";
     modelSchemaDefinition.pluralName = "Albums";
@@ -310,6 +343,24 @@ class Albums extends Model {
       key: Albums.USERMODELID,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Albums.ISFAVOURITE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Albums.POINTS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Albums.COVERHEIGHT,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

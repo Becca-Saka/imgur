@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
 import 'package:imgur/data/services/api_base_helper.dart';
 import 'package:imgur/data/services/api_response.dart';
@@ -31,16 +29,32 @@ class ApiRepository {
     final response = await _helper.getData(url, hasHeader: true);
     return response;
   }
-   Future<ApiResponse> getFeedComment(String id) async {
+
+  Future<ApiResponse> getFeedComment(String id) async {
     var url = '/gallery/$id/comments';
 
     final response = await _helper.getData(url, hasHeader: true);
     return response;
   }
 
-  Future<ApiResponse> uploadImages(String id, String image) async {
+  Future<ApiResponse> postFeedComment(String id, String comment) async {
+    var url = '/comment';
+    final body = {'image_id': id, 'comment': comment};
+    final response = await _helper.postData(url, body, hasTokenHeader: true);
+    return response;
+  }
+
+  Future<ApiResponse> uploadImages(
+      String id, String image, String? desc) async {
     var url = '/image';
-    final body = {'image': image, 'album': id, 'type': 'base64'};
+    final body = {
+      'image': image,
+      'album': id,
+      'type': 'base64',
+    };
+    if (desc != null && desc.isNotEmpty) {
+      body['description'] = desc;
+    }
     final response = await _helper.postData(url, body, hasTokenHeader: true);
     return response;
   }
@@ -68,6 +82,13 @@ class ApiRepository {
     var url = '/album/$id';
 
     final response = await _helper.getData(url, hasHeader: true);
+    return response;
+  }
+
+  Future<ApiResponse> favoriteImage(String? id) async {
+    var url = '/album/$id/favorite';
+
+    final response = await _helper.postData(url, null, hasTokenHeader: true);
     return response;
   }
 }

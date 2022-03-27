@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/ui/widgets/video_thumbnail.dart';
+import 'package:imgur/models/feed_arguments.dart';
+import 'package:imgur/ui/widgets/cont_widget.dart';
 
 class GalleryFeedList extends StatelessWidget {
   final List<FeedModel> feeds;
@@ -23,7 +24,8 @@ class GalleryFeedList extends StatelessWidget {
         final type = album != null ? album.type! : be.type!;
         return InkWell(
           onTap: () {
-            Navigator.pushNamed(context, Routes.singleFeedItem, arguments: be);
+            Navigator.pushNamed(context, Routes.singleFeedItem,
+                arguments: FeedArgumnet(feed: be));
           },
           child: Card(
             color: appBlack,
@@ -96,26 +98,5 @@ class GalleryFeedList extends StatelessWidget {
         );
       },
     );
-  }
-
-  bool isVideo(String type) => type.startsWith('video/');
-  bool isImage(String type) => type.startsWith('image/');
-
-  Widget getContentType(String type, String url, int height) {
-    final imageHeight = (height <= 350 ? height : 350).toDouble();
-
-    if (isImage(type)) {
-      return Image.network(
-        url,
-        fit: BoxFit.cover,
-        height: imageHeight,
-      );
-    } else if (isVideo(type)) {
-      return VideoThumbNailItem(
-        url: url,
-        height: imageHeight,
-      );
-    }
-    return const SizedBox.shrink();
   }
 }

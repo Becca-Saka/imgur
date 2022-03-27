@@ -1,13 +1,33 @@
+import 'dart:developer';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/state_controller.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
-import 'package:imgur/models/ModelProvider.dart';
 
 class AccountController extends StateController {
   UserModel get currentUser => _currentUser;
   UserModel _currentUser = UserModel(username: '');
   final SharedPreferenceService _preferenceService =
       locator<SharedPreferenceService>();
+  final AmplifyService _amplifyService = AmplifyService();
+  List<Albums> userAlbums = [];
+  List<Albums> userFavouriteAlbums = [];
+  List<PostComment> userComments = [];
+  _getUserComments() async {
+    _amplifyService.getUserCommentsStream().listen((event) {
+      userComments = event.items;
+      notifyListeners();
+    });
+  }
+
+  _getUserAlbums() async {
+    _amplifyService.getUserAlbumsStream().listen((event) {
+      userAlbums = event.items.where((element) => element.isFavourite == false).toList();
+      userFavouriteAlbums =
+          event.items.where((element) => element.isFavourite == true).toList();
+      log('userAlbums: $userAlbums userFavouriteAlbums: $userFavouriteAlbums');
+      notifyListeners();
+    });
+  }
 
   String? acessToken;
 
@@ -36,5 +56,11 @@ class AccountController extends StateController {
       return true;
     }
     return false;
+  }
+
+  getAccountInfo() {
+    _getUserAlbums();
+    _getUserComments();
+    log('getAccount');
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:imgur/models/ModelProvider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,11 +39,9 @@ class SharedPreferenceService {
       final diff = DateTime.fromMillisecondsSinceEpoch(validity);
       final res = diff.compareTo(DateTime.now());
       if (res > 0) {
-        log('Token is valid');
         return token['access_token'];
       }
     }
-    log('Token is invalid');
     return null;
   }
 }

@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 
 import 'package:http/http.dart';
+import 'package:imgur/app/barrel.dart';
 import 'package:imgur/app/config.dart';
-
-import 'api_response.dart';
 
 class ApiBaseHelper {
   static const String _baseUrl = 'https://api.imgur.com/3/';
-
-  static const String clientID = '67d8be663102607';
+  static String? get accessToken => locator<AccountController>().acessToken;
 
   Map<String, String> headers = {'Authorization': 'Client-ID $clientID'};
 
@@ -56,13 +53,16 @@ class ApiBaseHelper {
       request.fields.addAll(body);
     }
     if (hasHeader) {
-      // headers['Authorization'] = 'Client-ID $clientID';
+     headers = {'Authorization': 'Client-ID $clientID'};
+
       request.headers.addAll(headers);
     }
     if (hasTokenHeader) {
+      tokenheaders = {
+        'Authorization': 'Bearer $accessToken'
+      };
       request.headers.addAll(tokenheaders);
     }
-    log(request.headers.toString()+'uyuu');
     StreamedResponse response = await request.send().timeout(
           const Duration(seconds: 15),
         );

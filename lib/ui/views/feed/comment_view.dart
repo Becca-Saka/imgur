@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
-import 'package:imgur/ui/widgets/cont_widget.dart';
 
 class CommentView extends StatelessWidget {
   final FeedModel feed;
@@ -41,24 +38,26 @@ class CommentView extends StatelessWidget {
                                   feed.images!.first.link!,
                                   feed.images!.first.height)),
                           const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${feed.title}',
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 16)),
-                              RichText(
-                                  text: TextSpan(
-                                text: 'By ',
-                                style: TextStyle(color: appLightGrey, fontSize: 12),
-                                children: [
-                                  TextSpan(
-                                    text: '${feed.feedAuthor}',
-                                    style: const TextStyle(color: Colors.purple),
-                                  ),
-                                ],
-                              )),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('${feed.title}',
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 16)),
+                                RichText(
+                                    text: TextSpan(
+                                  text: 'By ',
+                                  style: TextStyle(color: appLightGrey, fontSize: 12),
+                                  children: [
+                                    TextSpan(
+                                      text: '${feed.feedAuthor}',
+                                      style: const TextStyle(color: Colors.purple),
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -84,6 +83,7 @@ class CommentView extends StatelessWidget {
                         ),
                       ),
                     ),
+                  
                   ],
                 ),
                 Align(
@@ -121,14 +121,7 @@ class CommentView extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () async {
-                            try {
-                           log('clicked');
-                           
-                            // final controller = locator<FeedController>();
-                            await controller.makeComment(feed);
-                            } catch (e) {
-                              print(e);
-                            }
+                            return await controller.makeComment(feed);
                           },
                           icon: const Icon(Icons.send),
                           color: appLightGrey,

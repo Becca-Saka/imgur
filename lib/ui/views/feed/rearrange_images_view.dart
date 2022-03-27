@@ -38,15 +38,14 @@ class ReArrageImagesView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 15),
-              const Text('No title',
-                  style: TextStyle(
+               Text('${controller.uploadTitle}?? No title',
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
               Expanded(
                 child: ReorderableListView(
-                  // padding: const EdgeInsets.symmetric(horizontal: 40),
                   children: controller.imagesToUploadMap
                       .map((e) => SizedBox(
                             key: UniqueKey(),

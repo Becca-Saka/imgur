@@ -32,7 +32,6 @@ dependencies:
   amplify_datastore: ^0.4.0
   amplify_flutter: ^0.4.0
   connectivity_plus: ^2.2.1
-  coolicons: ^1.0.0
   cupertino_icons: ^1.0.2
   fancy_shimmer_image: ^2.0.1+1
   file_picker: ^4.5.1
@@ -47,7 +46,6 @@ dependencies:
   url_launcher: ^6.0.20
   video_player: ^2.3.0
   video_thumbnail: ^0.4.6
-  webview_flutter: ^3.0.1
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -77,7 +75,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+ 
   fonts:
+    - family:  ImgurIconPack
+      fonts:
+        - asset: fonts/icon/ImgurIconPack.ttf
     - family: Roboto
       fonts:
         - asset: fonts/Roboto-Bold.ttf

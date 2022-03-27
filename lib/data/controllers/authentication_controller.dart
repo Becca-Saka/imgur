@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:imgur/app/appstate.dart';
@@ -36,7 +35,6 @@ class AuthenticationController extends StateController
         imguruserData['username'] = sharedData['username'];
         imguruserData['expires_in'] = sharedData['expires_in'];
 
-        log(imguruserData.toString());
 
         if (loginMethod != null) {
           if (loginMethod == "Google") {
@@ -70,10 +68,11 @@ class AuthenticationController extends StateController
 
   ///Url launcher is used because federated login(facebook and google) is disabled in embedded browser
   ///So if user isn't sign in with imgur they cant login with imgur's federated login
-  Future<bool> _launchURL() async {
+  Future<void> _launchURL() async {
+    
     final _url =
         'https://api.imgur.com/oauth2/authorize?client_id=$clientID&response_type=token';
-    return await canLaunch(_url)
+     await canLaunch(_url)
         ? await launch(_url)
         : throw 'Could not launch $_url';
   }
@@ -90,9 +89,13 @@ class AuthenticationController extends StateController
     final result = await _authenticationService.signInUserWithGoogle();
 
     if (result != null) {
+
       _sharedPreferenceService.saveToken(imguruserData);
       _accountController.updateCurrentUser(result);
+      
+      _accountController.loadAccessTokenFromStorage();
       _navigationService.navigateTo(Routes.mainView);
+      imguruserData = {};
     }
     setAppState(AppState.idle);
   }
@@ -104,7 +107,9 @@ class AuthenticationController extends StateController
     if (result != null) {
       _sharedPreferenceService.saveToken(imguruserData);
       _accountController.updateCurrentUser(result);
-      _navigationService.navigateTo(Routes.dashboard);
+      _accountController.loadAccessTokenFromStorage();
+      _navigationService.navigateTo(Routes.mainView);
+      imguruserData = {};
     }
     setAppState(AppState.idle);
   }
@@ -113,15 +118,12 @@ class AuthenticationController extends StateController
   Future<bool> getSignedIn() async {
     UserModel? result = await _authenticationService.getCurrentUser();
     if (result != null) {
-      log('User is signed in ${result.toString()}');
       final isValid = await _accountController.loadAccessTokenFromStorage();
       if (isValid) {
-        log("User is signed in");
         _accountController.updateCurrentUser(result);
         return true;
       }
     }
-    log("User is not signed in");
     return false;
   }
 }

@@ -1,1 +1,1 @@
-enum AppState { idle, busy, uploading }
+enum AppState { idle, busy }

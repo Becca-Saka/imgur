@@ -9,38 +9,12 @@ import 'package:imgur/models/comments_models.dart';
 import 'package:imgur/models/feed_arguments.dart';
 import 'state_controller.dart';
 
-final allowedExtensions = [
-  'jpg',
-  'png',
-  'gif',
-  'jpeg',
-  'webp',
-  'WEBM',
-  'MPG',
-  'MP2',
-  'MPEG',
-  'MPE',
-  'MPV',
-  'OGG',
-  'MP4',
-  'M4P',
-  'M4V',
-  'AVI',
-  'WMV',
-  'MOV',
-  'QT',
-  'FLV',
-  'SWF',
-  'AVCHD'
-];
-
 class FeedController extends StateController {
   final NavigationService _navigationService = locator<NavigationService>();
   final ApiRepository _apiRepository = locator<ApiRepository>();
   final AccountController _accountController = locator<AccountController>();
   UserModel get user => _accountController.currentUser;
   final AmplifyService _amplifyService = AmplifyService();
-  UserModel get currentUser => _accountController.currentUser;
   List<FeedModel> feeds = [];
   List<FeedModel> viralfeeds = [];
   List<FeedModel> userSubfeeds = [];
@@ -53,6 +27,7 @@ class FeedController extends StateController {
   TextEditingController commentController = TextEditingController();
 
   int currentIndex = 0;
+
   onTabChanged(int index) async {
     if (index == 1) {
       navigateToUpload();
@@ -75,13 +50,14 @@ class FeedController extends StateController {
     }
   }
 
-  getUSerSubFeeds() async {
-    if (viralfeeds.isEmpty) {
+  getUserSubFeeds() async {
+    if (userSubfeeds.isEmpty) {
       setAppState(AppState.busy);
       ApiResponse? response = await _apiRepository.getUserSubFeed();
       if (response.isSuccessful) {
         final feedslist = response.data as List<dynamic>;
         userSubfeeds = feedslist.map((e) => FeedModel.fromJson(e)).toList();
+        userSubfeeds.shuffle();
       }
       setAppState(AppState.idle);
     }
@@ -93,16 +69,7 @@ class FeedController extends StateController {
         getViralFeeds();
         break;
       case 1:
-        getUSerSubFeeds();
-        break;
-      case 2:
-        //TODO: get following feeds
-        break;
-      case 3:
-        //TODO: get snacks
-        break;
-      case 4:
-        //TODO: get storytimes
+        getUserSubFeeds();
         break;
     }
   }
@@ -209,13 +176,14 @@ class FeedController extends StateController {
   }
 
   makeComment(FeedModel feedModel) async {
-    log('commenting');
+    log('make comment ${commentController.text} ${commentController.text.isNotEmpty}');
     if (commentController.text.isNotEmpty) {
+      log('here');
       final commentText = commentController.text;
-      final response =
-          await _apiRepository.postFeedComment(feedModel.id, commentController.text);
+      final response = await _apiRepository.postFeedComment(
+          feedModel.id, commentController.text);
+          log('response ${response.isSuccessful}'); 
       if (response.isSuccessful) {
-        log('data ${response.data}');
         final Album? album =
             feedModel.images != null && feedModel.images!.isNotEmpty
                 ? feedModel.images!
@@ -231,16 +199,17 @@ class FeedController extends StateController {
             points: feedModel.points.toString(),
             date: DateTime.now().millisecondsSinceEpoch.toString(),
             comment: commentText);
+            log('comment ${comments.toJson()}');
         await _amplifyService.saveUserComments(comments);
+            log('comment  done');
         commentController.clear();
         _navigationService.back();
-        log('comment posted');
       }
     }
   }
 
-  favoriteImage(String id) async {
-    final response = await _apiRepository.favoriteImage(id);
+  favoriteMedia(String id) async {
+    final response = await _apiRepository.favoriteMedia(id);
     if (response.isSuccessful) {
       final albumresp = await _apiRepository.getAlbum(id);
       Albums album = await convertFeedToAlbum(albumresp.data);
@@ -251,6 +220,7 @@ class FeedController extends StateController {
     }
   }
 
+  ///Picks Medias and maps paths of the images to a textcontronller to acess title of each images before uploading
   navigateToUpload() async {
     final imageResult = await pickFile();
     if (imageResult != null) {
@@ -267,4 +237,8 @@ class FeedController extends StateController {
   navigateToRearrange() => _navigationService.navigateTo(Routes.rearrangeView);
   void navigateToComment(FeedModel feedModel) =>
       _navigationService.navigateTo(Routes.commetsView, arguments: feedModel);
+
+  void onTitleChanged(String value) {
+    uploadTitle = value;
+  }
 }

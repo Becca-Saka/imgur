@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/models/comments_models.dart';
 import 'package:imgur/models/feed_arguments.dart';
-import 'package:imgur/ui/widgets/cont_widget.dart';
-import 'package:imgur/ui/widgets/video_player.dart';
 
 class SingleFeedView extends StatelessWidget {
   final FeedArgumnet feedArgument;
@@ -99,7 +97,10 @@ class SingleFeedView extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.arrow_upward_outlined),
+                icon: const Icon(
+                  ImgurIconPack.upArrow,
+                  size: 18,
+                ),
                 color:
                     isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
               ),
@@ -110,28 +111,34 @@ class SingleFeedView extends StatelessWidget {
                           ? appLightGrey.withOpacity(0.2)
                           : appLightGrey),
                   !isUserFeed
-                      ? const Text('113',
-                          style: TextStyle(
+                      ? Text('${feed.points}',
+                          style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white))
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                 ],
               ),
               IconButton(
                 onPressed: () {},
                 color:
                     isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
-                icon: const Icon(Icons.arrow_downward_outlined),
+                icon: const RotatedBox(
+                    quarterTurns: 2,
+                    child: Icon(
+                      ImgurIconPack.upArrow,
+                      size: 18,
+                    )),
               ),
               IconButton(
                   onPressed: () {
-                    controller.favoriteImage(feed.id);
+                    controller.favoriteMedia(feed.id);
                   },
                   color:
                       isUserFeed ? appLightGrey.withOpacity(0.2) : Colors.white,
-                  icon: const Icon(Icons.favorite_border, color: Colors.white)),
-              const Icon(Icons.share_outlined, color: Colors.white),
+                  icon: const Icon(ImgurIconPack.favorite,
+                      color: Colors.white, size: 18)),
+              const Icon(ImgurIconPack.share, color: Colors.white, size: 18),
             ],
           ),
         ),
@@ -150,34 +157,36 @@ class SingleFeedView extends StatelessWidget {
                 child: Text(
                   '${feed.views} views',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: appLightGrey,
-                  ),
+                      fontSize: 12,
+                      color: appLightGrey,
+                      fontWeight: FontWeight.bold),
                 ))
             : Row(
                 children: [
                   Icon(
-                    Icons.compare_arrows,
+                    ImgurIconPack.upDown,
                     color: appLightGrey,
-                    size: 16,
+                    size: 15,
                   ),
                   const SizedBox(width: 5),
                   Text('BEST COMMENTS',
-                      style: TextStyle(fontSize: 14, color: appLightGrey)),
+                      style: TextStyle(fontSize: 13, color: appLightGrey)),
                   const Spacer(),
                   InkWell(
-                    onTap:() =>  controller.navigateToComment(feed),
+                    onTap: () => controller.navigateToComment(feed),
                     child: Row(
                       children: const [
                         Icon(
                           Icons.comment,
                           color: Colors.white,
-                          size: 16,
+                          size: 15,
                         ),
                         SizedBox(width: 5),
-                        Text('COMMxENT',
-                            style:
-                                TextStyle(fontSize: 14, color: Colors.white)),
+                        Text('COMMENT',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
                       ],
                     ),
                   )
@@ -193,6 +202,7 @@ class SingleFeedView extends StatelessWidget {
       child: Column(
         children: [
           _commentTopBar(controller),
+          const SizedBox(height: 10),
           controller.comments.isNotEmpty
               ? ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -212,13 +222,10 @@ class SingleFeedView extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IconButton(
+         IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.close),
             color: Colors.white),
-        // const CircleAvatar(
-        //   radius: 15,
-        // ),
         profilePicture(
             isUserFeed ? controller.user.username : feed.feedAuthor!),
         const SizedBox(width: 10),
@@ -228,7 +235,7 @@ class SingleFeedView extends StatelessWidget {
             children: [
               Text(feed.title ?? '',
                   style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
               const SizedBox(height: 5),
@@ -249,7 +256,10 @@ class SingleFeedView extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  Text(isUserFeed ? 'Hidden' : ' 3h',
+                  Text(
+                      isUserFeed
+                          ? 'Hidden'
+                          : ' ${readTimeStampDaysOnly(feed.datetime)}',
                       style: TextStyle(fontSize: 14, color: appLightGrey)),
                 ],
               ),
@@ -312,37 +322,47 @@ class CommentFeedItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              profilePicture(item.author),
+              profilePicture(item.author, radius: 13),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center ,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        
-                        Text(item.author.length > 28 ? item.author.substring(0, 28)+'...' : item.author,
+                        Text(
+                            item.author.length > 28
+                                ? item.author.substring(0, 28) + '...'
+                                : item.author,
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis ,
+                                overflow: TextOverflow.ellipsis,
                                 color: appLightGrey)),
-                        Text(' . 3h',
+                        Text(' ${String.fromCharCodes(Runes('\u00B7'))} ',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                                color: appLightGrey)),
+                        Text(readTimeStampDaysOnly(item.datetime),
                             style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 color: appLightGrey)),
-                        const Spacer(flex: 2,),
-                        // Text(
-                        //     '${item.author} . ${item.datetime}'),
+                        const Spacer(
+                          flex: 2,
+                        ),
                         Visibility(
                           visible: item.commentCount > 0,
                           child: Container(
@@ -369,12 +389,13 @@ class CommentFeedItem extends StatelessWidget {
                             color: Colors.white)),
                     Container(
                       margin: const EdgeInsets.only(right: 80),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      padding: const EdgeInsets.only(top: 20, bottom: 6),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Icon(
-                            Icons.arrow_upward_outlined,
+                            ImgurIconPack.upArrow,
+                            size: 14,
                             color: appLightGrey,
                           ),
                           Text('${item.points}',
@@ -382,8 +403,13 @@ class CommentFeedItem extends StatelessWidget {
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: appLightGrey)),
-                          Icon(Icons.arrow_downward_outlined,
-                              color: appLightGrey),
+                          RotatedBox(
+                              quarterTurns: 2,
+                              child: Icon(
+                                ImgurIconPack.upArrow,
+                                size: 14,
+                                color: appLightGrey,
+                              )),
                           Text('Reply',
                               style: TextStyle(
                                   fontSize: 12,

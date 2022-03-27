@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:imgur/app/barrel.dart';
 
 class FavoritesListItem extends StatelessWidget {
@@ -49,7 +48,7 @@ class FavoritesListItem extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             getContentType(
-                                albums.coverType, albums.coverLink, 350),
+                                albums.coverType, albums.coverLink, albums.coverHeight),
                             Padding(
                               padding:
                                   const EdgeInsets.all(8.0).copyWith(top: 0),
@@ -65,7 +64,7 @@ class FavoritesListItem extends StatelessWidget {
                                     children: [
                                       const Icon(Icons.arrow_upward,
                                           color: Colors.white, size: 16),
-                                      Text('${albums.points} Points',
+                                      Text(' ${albums.points??0} Points',
                                           style:
                                               TextStyle(color: appLightGrey)),
                                     ],
@@ -123,10 +122,10 @@ class FavoritesListItem extends StatelessWidget {
                   );
                 },
               )
-            : const Center(
+            :  Center(
                 child: Text('No Albums',
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: appLightGrey )),
               ),
       )
     ]);

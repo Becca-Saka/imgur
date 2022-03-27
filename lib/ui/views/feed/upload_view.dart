@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +13,14 @@ class UploadView extends StatelessWidget {
     return BaseView<FeedController>(builder: (context, controller, child) {
       return WillPopScope(
         onWillPop: () async {
+          /// stops the user from going back or closing th page while uploading
           if (controller.state == AppState.busy) {
             return false;
           }
           return true;
         },
         child: Scaffold(
-          backgroundColor: appDeepBlack,
+          backgroundColor: Colors.black,
           body: Stack(
             children: [
               Padding(
@@ -39,10 +39,12 @@ class UploadView extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: TextField(
+                                    onChanged: controller.onTitleChanged ,
                                     decoration: InputDecoration(
                                         hintText: 'Post title(optional)',
                                         hintStyle:
                                             TextStyle(color: appDarkGrey),
+                                        
                                         border: InputBorder.none),
                                   ),
                                 ),
@@ -66,7 +68,7 @@ class UploadView extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(
-                                  Icons.remove_red_eye,
+                                  ImgurIconPack.eyeClosed,
                                   color: appLightGrey,
                                 ),
                                 RichText(
@@ -89,26 +91,12 @@ class UploadView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    // ListView.builder(
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   shrinkWrap: true,
-                    //   itemBuilder: (context, index) {
-                    //     final image = controller.imagesToUpload[index];
-                    //     log('image: $index ${ controller.textControllers[0].text}');
-
-                    //     return ImageItem(
-                    //       imagePath: image,
-                    //       controller: controller.textControllers[index],
-                    //     );
-                    //   },
-                    //   itemCount: controller.imagesToUpload.length,
-                    // ),
+                   
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final image = controller.imagesToUploadMap[index];
-                        // log('image: $index ${ controller.textControllers[0].text}');
 
                         return ImageItem(
                           imagePath: image['image'],
@@ -132,7 +120,7 @@ class UploadView extends StatelessWidget {
                         text: TextSpan(
                             text: 'By uploading, you agree to our ',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               color: appLightGrey,
                             ),
                             children: [
@@ -172,7 +160,11 @@ class UploadView extends StatelessWidget {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.of(context).pop(),
+                            color: Colors.white,
+                            onPressed: () {
+                              controller.clear();
+                              Navigator.of(context).pop();
+                            },
                           ),
                           InkWell(
                             onTap: () {

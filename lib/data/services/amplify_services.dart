@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:imgur/models/ModelProvider.dart';
@@ -29,7 +28,6 @@ class AmplifyService {
   }
 
   saveUserFavorite(Albums album) async {
-    log('favorite xx: ${album.toString()}');
     await dataStore.save(album);
   }
 }

@@ -9,7 +9,7 @@ import 'package:imgur/app/snackbar_service.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
 
 GetIt locator = GetIt.instance;
-
+///Used to inject service so we can acess anywhere
 void setupLocator() {
   locator.registerLazySingleton(() => SharedPreferenceService());
   locator.registerLazySingleton(() => AuthenticationService());

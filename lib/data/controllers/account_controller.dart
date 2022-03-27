@@ -1,17 +1,24 @@
-import 'dart:developer';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/data/controllers/state_controller.dart';
 import 'package:imgur/data/services/shared_preferences.dart';
 
 class AccountController extends StateController {
+
   UserModel get currentUser => _currentUser;
-  UserModel _currentUser = UserModel(username: '');
+
+  late UserModel _currentUser;
+
   final SharedPreferenceService _preferenceService =
       locator<SharedPreferenceService>();
+
   final AmplifyService _amplifyService = AmplifyService();
+
   List<Albums> userAlbums = [];
   List<Albums> userFavouriteAlbums = [];
   List<PostComment> userComments = [];
+
+  String? acessToken;
+
   _getUserComments() async {
     _amplifyService.getUserCommentsStream().listen((event) {
       userComments = event.items;
@@ -24,12 +31,10 @@ class AccountController extends StateController {
       userAlbums = event.items.where((element) => element.isFavourite == false).toList();
       userFavouriteAlbums =
           event.items.where((element) => element.isFavourite == true).toList();
-      log('userAlbums: $userAlbums userFavouriteAlbums: $userFavouriteAlbums');
       notifyListeners();
     });
   }
 
-  String? acessToken;
 
   updateCurrentUser(UserModel user) {
     _currentUser = user;
@@ -61,6 +66,5 @@ class AccountController extends StateController {
   getAccountInfo() {
     _getUserAlbums();
     _getUserComments();
-    log('getAccount');
   }
 }

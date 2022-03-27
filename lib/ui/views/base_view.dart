@@ -3,6 +3,7 @@ import 'package:imgur/app/locator.dart';
 import 'package:imgur/data/controllers/state_controller.dart';
 import 'package:provider/provider.dart';
 
+///Creates a wrapper that makes the [StateController] available to all descendants in the widget tree
 class BaseView<T extends StateController> extends StatefulWidget {
   final Widget Function(BuildContext context, T model, Widget? child) builder;
   final Function(T)? onModelReady;
@@ -31,8 +32,5 @@ class _BaseViewState<T extends StateController> extends State<BaseView<T>> {
       value: model,
       child: Consumer<T>(builder: widget.builder),
     );
-    // return ChangeNotifierProvider<T>(
-    //     create: (context) => model,
-    //     child: Consumer<T>(builder: widget.builder));
   }
 }

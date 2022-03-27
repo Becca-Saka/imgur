@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/models/feed_arguments.dart';
-import 'package:imgur/ui/widgets/cont_widget.dart';
 
 class GalleryFeedList extends StatelessWidget {
   final List<FeedModel> feeds;
@@ -16,6 +14,7 @@ class GalleryFeedList extends StatelessWidget {
       crossAxisSpacing: 2,
       itemCount: feeds.length,
       itemBuilder: (context, index) {
+        ///Checks if the feed is an album or a single photo
         final be = feeds[index];
         final Album? album = be.images != null && be.images!.isNotEmpty
             ? be.images!.firstWhere((element) => element.id == be.cover)
@@ -42,10 +41,20 @@ class GalleryFeedList extends StatelessWidget {
                         children: [
                           const SizedBox(height: 10),
                           Text('${be.title}',
-                              style: const TextStyle(color: Colors.white)),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
                           const SizedBox(height: 10),
-                          const Text('135',
-                              style: TextStyle(color: Colors.white)),
+                          Row(
+                            children: [
+                              Icon(ImgurIconPack.upArrow,
+                                  color: appLightGrey, size: 14),
+                              const SizedBox(width: 4),
+                              Text('${be.points} Points',
+                                  style: TextStyle(color: appLightGrey)),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -68,14 +77,22 @@ class GalleryFeedList extends StatelessWidget {
                                         shadows: [
                                           Shadow(
                                               color:
-                                                  Colors.black.withOpacity(0.6),
-                                              blurRadius: 25),
+                                                  Colors.black.withOpacity(0.8),
+                                              blurRadius: 7),
                                         ],
                                       )),
-                                  Card(
-                                    elevation: 8,
-                                    color: Colors.transparent,
-                                    shadowColor: Colors.black.withOpacity(0.6),
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    width: 18,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.4),
+                                            blurRadius: 4),
+                                      ],
+                                    ),
                                     child: const Icon(
                                       Icons.content_copy,
                                       color: Colors.white,
@@ -89,7 +106,7 @@ class GalleryFeedList extends StatelessWidget {
                                     Icons.videocam,
                                     color: Colors.white,
                                   )
-                                : SizedBox.shrink()),
+                                : const SizedBox.shrink()),
                   ),
                 ),
               ],

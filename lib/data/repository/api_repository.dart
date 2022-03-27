@@ -85,7 +85,7 @@ class ApiRepository {
     return response;
   }
 
-  Future<ApiResponse> favoriteImage(String? id) async {
+  Future<ApiResponse> favoriteMedia(String? id) async {
     var url = '/album/$id/favorite';
 
     final response = await _helper.postData(url, null, hasTokenHeader: true);

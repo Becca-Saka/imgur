@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 
@@ -28,16 +27,13 @@ class ProfileListItem extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        //TODO:change cover height
-                        getContentType(albums.coverType, albums.coverLink, 350),
+                        getContentType(albums.coverType, albums.coverLink,
+                            albums.coverHeight),
                         Padding(
                           padding: const EdgeInsets.all(8.0).copyWith(top: 0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 10),
-                              Text('${albums.title}',
-                                  style: const TextStyle(color: Colors.white)),
                               const SizedBox(height: 10),
                               Text('HIDDEN',
                                   style: TextStyle(color: appLightGrey)),
@@ -52,9 +48,12 @@ class ProfileListItem extends StatelessWidget {
                         child: Visibility(
                           visible: albums.length != 0,
                           replacement: isVideo(albums.coverType)
-                              ? const Icon(
-                                  Icons.videocam,
-                                  color: Colors.white,
+                              ? const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.videocam,
+                                    color: Colors.white,
+                                  ),
                                 )
                               : const SizedBox.shrink(),
                           child: Visibility(
@@ -94,9 +93,9 @@ class ProfileListItem extends StatelessWidget {
               );
             },
           )
-        : const Center(
+        :  Center(
             child: Text('No Albums',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: appLightGrey )),
           );
   }
 }

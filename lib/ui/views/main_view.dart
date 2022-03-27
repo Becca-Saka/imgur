@@ -1,4 +1,3 @@
-import 'package:coolicons/coolicons.dart';
 import 'package:flutter/material.dart';
 import 'package:imgur/app/barrel.dart';
 import 'package:imgur/ui/views/profile/profile_view.dart';
@@ -14,20 +13,19 @@ class MainView extends StatelessWidget {
         builder: (context, controller, child) {
           return Scaffold(
             body: getBody(controller),
-            //TODO: change bottombar icons
             bottomNavigationBar: BottomNavigationBar(
               elevation: 0,
               showSelectedLabels: false,
               showUnselectedLabels: false,
               backgroundColor: appDeepBlack,
-              unselectedItemColor: Colors.black,
+              unselectedItemColor: Colors.white,
               selectedItemColor: appGreen,
               currentIndex: controller.currentIndex,
               iconSize: 30,
               onTap: controller.onTabChanged,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: Icon(Coolicons.home_outline),
+                  icon: Icon(ImgurIconPack.home),
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
@@ -35,7 +33,7 @@ class MainView extends StatelessWidget {
                   label: 'Search',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
+                  icon: Icon(ImgurIconPack.person),
                   label: 'Profile',
                 ),
               ],
@@ -50,7 +48,7 @@ class MainView extends StatelessWidget {
       Container(
         color: appBlue,
       ),
-     ProfileView()
+      const ProfileView()
     ];
     return IndexedStack(
       index: controller.currentIndex,

@@ -35,7 +35,6 @@ class AuthenticationController extends StateController
         imguruserData['username'] = sharedData['username'];
         imguruserData['expires_in'] = sharedData['expires_in'];
 
-
         if (loginMethod != null) {
           if (loginMethod == "Google") {
             _signUpWithGoogle();
@@ -69,12 +68,9 @@ class AuthenticationController extends StateController
   ///Url launcher is used because federated login(facebook and google) is disabled in embedded browser
   ///So if user isn't sign in with imgur they cant login with imgur's federated login
   Future<void> _launchURL() async {
-    
     final _url =
         'https://api.imgur.com/oauth2/authorize?client_id=$clientID&response_type=token';
-     await canLaunch(_url)
-        ? await launch(_url)
-        : throw 'Could not launch $_url';
+    await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
   }
 
   Future<void> requestSignUp(
@@ -89,13 +85,11 @@ class AuthenticationController extends StateController
     final result = await _authenticationService.signInUserWithGoogle();
 
     if (result != null) {
-
       _sharedPreferenceService.saveToken(imguruserData);
       _accountController.updateCurrentUser(result);
-      
+      _accountController.acessToken = imguruserData['access_token'];
       _accountController.loadAccessTokenFromStorage();
-      _navigationService.navigateTo(Routes.mainView);
-      imguruserData = {};
+      _navigationService.closeAndNavigateTo(Routes.mainView);
     }
     setAppState(AppState.idle);
   }
@@ -107,9 +101,9 @@ class AuthenticationController extends StateController
     if (result != null) {
       _sharedPreferenceService.saveToken(imguruserData);
       _accountController.updateCurrentUser(result);
+      _accountController.acessToken = imguruserData['access_token'];
       _accountController.loadAccessTokenFromStorage();
-      _navigationService.navigateTo(Routes.mainView);
-      imguruserData = {};
+      _navigationService.closeAndNavigateTo(Routes.mainView);
     }
     setAppState(AppState.idle);
   }

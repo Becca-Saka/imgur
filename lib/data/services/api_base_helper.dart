@@ -64,7 +64,7 @@ class ApiBaseHelper {
       request.headers.addAll(tokenheaders);
     }
     StreamedResponse response = await request.send().timeout(
-          const Duration(seconds: 15),
+          const Duration(seconds: 45),
         );
     return await _response(response);
   }
